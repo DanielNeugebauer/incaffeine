@@ -1,0 +1,20 @@
+image: hhucn/python
+
+stages:
+  - test
+
+before_script:
+  - export PIP_CACHE_DIR="pip-cache"
+  - pip install --quiet -U pip
+
+# ------------------------------------------------------------------------------
+# Job definitions
+
+flake8:
+  stage: test
+  script:
+    - pip3 install --quiet flake8
+    - flake8 .
+  allow_failure: true
+
+
