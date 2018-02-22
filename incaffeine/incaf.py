@@ -125,47 +125,26 @@ class IncAF(AF):
     # Naive, exponential solutions to possible/necessary problems variants.
 
     def possible_verification(self, args, semantics):
-        af = copy.deepcopy(self)
-        possible_attacks = []
-        for attacker in range(af.n):
-            for target in range(af.n):
-                if af.R[attacker][target] == IncAF.POSSIBLE_ATTACK:
-                    possible_attacks.append((attacker, target))
-        possible_arguments = []
-        for arg in range(af.n):
-            if af.A[arg] == IncAF.POSSIBLE_ARGUMENT:
-                possible_arguments.append(arg)
-        return af.possible_verification_rec(args, semantics, possible_attacks, len(possible_attacks),
-                                            possible_arguments, len(possible_arguments))
-
-    def possible_verification_rec(self, args, semantics, possible_attacks, k_att, possible_arguments, k_arg):
-        if k_att == 0:
-            if k_arg == 0:
-                return self.verification(args, semantics)
-
-            k_arg -= 1
-            possible_argument = possible_arguments[k_arg]
-            self.set_argument(possible_argument, IncAF.DEFINITE_ARGUMENT)
-            if self.possible_verification_rec(args, semantics, possible_attacks, k_att, possible_arguments, k_arg):
-                return True
-            self.set_argument(possible_argument, IncAF.NO_ARGUMENT)
-            if self.possible_verification_rec(args, semantics, possible_attacks, k_att, possible_arguments, k_arg):
-                return True
-            self.set_argument(possible_argument, IncAF.POSSIBLE_ARGUMENT)
-            return False
-
-        k_att -= 1
-        possible_attack = possible_attacks[k_att]
-        self.set_attack(possible_attack[0], possible_attack[1], IncAF.DEFINITE_ATTACK)
-        if self.possible_verification_rec(args, semantics, possible_attacks, k_att, possible_arguments, k_arg):
-            return True
-        self.set_attack(possible_attack[0], possible_attack[1], IncAF.NO_ATTACK)
-        if self.possible_verification_rec(args, semantics, possible_attacks, k_att, possible_arguments, k_arg):
-            return True
-        self.set_attack(possible_attack[0], possible_attack[1], IncAF.POSSIBLE_ATTACK)
-        return False
+        def condition(af):
+            return af.verification(args, semantics)
+        return self.possibly_satisfied(condition)
 
     def necessary_verification(self, args, semantics):
+        def condition(af):
+            return af.verification(args, semantics)
+        return self.necessarily_satisfied(condition)
+
+    def is_possibly_acceptable(self, args, arg):
+        def condition(af):
+            return af.is_acceptable(arg, args)
+        return self.possibly_satisfied(condition)
+
+    def is_necessarily_acceptable(self, args, arg):
+        def condition(af):
+            return af.is_acceptable(arg, args)
+        return self.necessarily_satisfied(condition)
+
+    def possibly_satisfied(self, condition):
         af = copy.deepcopy(self)
         possible_attacks = []
         for attacker in range(af.n):
@@ -176,62 +155,21 @@ class IncAF(AF):
         for arg in range(af.n):
             if af.A[arg] == IncAF.POSSIBLE_ARGUMENT:
                 possible_arguments.append(arg)
-        return af.necessary_verification_rec(args, semantics, possible_attacks, len(possible_attacks),
-                                             possible_arguments, len(possible_arguments))
+        return af.possibly_satisfied_rec(condition, possible_attacks, len(possible_attacks),
+                                         possible_arguments, len(possible_arguments))
 
-    def necessary_verification_rec(self, args, semantics, possible_attacks, k_att, possible_arguments, k_arg):
+    def possibly_satisfied_rec(self, condition, possible_attacks, k_att, possible_arguments, k_arg):
         if k_att == 0:
             if k_arg == 0:
-                return self.verification(args, semantics)
+                return condition(self)
 
             k_arg -= 1
             possible_argument = possible_arguments[k_arg]
             self.set_argument(possible_argument, IncAF.DEFINITE_ARGUMENT)
-            if not self.necessary_verification_rec(args, semantics, possible_attacks, k_att, possible_arguments, k_arg):
-                return False
-            self.set_argument(possible_argument, IncAF.NO_ARGUMENT)
-            if not self.necessary_verification_rec(args, semantics, possible_attacks, k_att, possible_arguments, k_arg):
-                return False
-            self.set_argument(possible_argument, IncAF.POSSIBLE_ARGUMENT)
-            return True
-
-        k_att -= 1
-        possible_attack = possible_attacks[k_att]
-        self.set_attack(possible_attack[0], possible_attack[1], IncAF.DEFINITE_ATTACK)
-        if not self.necessary_verification_rec(args, semantics, possible_attacks, k_att, possible_arguments, k_arg):
-            return False
-        self.set_attack(possible_attack[0], possible_attack[1], IncAF.NO_ATTACK)
-        if not self.necessary_verification_rec(args, semantics, possible_attacks, k_att, possible_arguments, k_arg):
-            return False
-        self.set_attack(possible_attack[0], possible_attack[1], IncAF.POSSIBLE_ATTACK)
-        return True
-
-    def is_possibly_acceptable(self, a, args):
-        af = copy.deepcopy(self)
-        possible_attacks = []
-        for attacker in range(af.n):
-            for target in range(af.n):
-                if af.R[attacker][target] == IncAF.POSSIBLE_ATTACK:
-                    possible_attacks.append((attacker, target))
-        possible_arguments = []
-        for arg in range(af.n):
-            if af.A[arg] == IncAF.POSSIBLE_ARGUMENT:
-                possible_arguments.append(arg)
-        return af.is_possibly_acceptable_rec_incaf(a, args, possible_attacks, len(possible_attacks),
-                                                   possible_arguments, len(possible_arguments))
-
-    def is_possibly_acceptable_rec_incaf(self, a, args, possible_attacks, k_att, possible_arguments, k_arg):
-        if k_att == 0:
-            if k_arg == 0:
-                return self.is_acceptable(a, args)
-
-            k_arg -= 1
-            possible_argument = possible_arguments[k_arg]
-            self.set_argument(possible_argument, IncAF.DEFINITE_ARGUMENT)
-            if self.is_possibly_acceptable_rec_incaf(a, args, possible_attacks, k_att, possible_arguments, k_arg):
+            if self.possibly_satisfied_rec(condition, possible_attacks, k_att, possible_arguments, k_arg):
                 return True
             self.set_argument(possible_argument, IncAF.NO_ARGUMENT)
-            if self.is_possibly_acceptable_rec_incaf(a, args, possible_attacks, k_att, possible_arguments, k_arg):
+            if self.possibly_satisfied_rec(condition, possible_attacks, k_att, possible_arguments, k_arg):
                 return True
             self.set_argument(possible_argument, IncAF.POSSIBLE_ARGUMENT)
             return False
@@ -239,15 +177,15 @@ class IncAF(AF):
         k_att -= 1
         possible_attack = possible_attacks[k_att]
         self.set_attack(possible_attack[0], possible_attack[1], IncAF.DEFINITE_ATTACK)
-        if self.is_possibly_acceptable_rec_incaf(a, args, possible_attacks, k_att, possible_arguments, k_arg):
+        if self.possibly_satisfied_rec(condition, possible_attacks, k_att, possible_arguments, k_arg):
             return True
         self.set_attack(possible_attack[0], possible_attack[1], IncAF.NO_ATTACK)
-        if self.is_possibly_acceptable_rec_incaf(a, args, possible_attacks, k_att, possible_arguments, k_arg):
+        if self.possibly_satisfied_rec(condition, possible_attacks, k_att, possible_arguments, k_arg):
             return True
         self.set_attack(possible_attack[0], possible_attack[1], IncAF.POSSIBLE_ATTACK)
         return False
 
-    def is_necessarily_acceptable(self, a, args):
+    def necessarily_satisfied(self, condition):
         af = copy.deepcopy(self)
         possible_attacks = []
         for attacker in range(af.n):
@@ -258,23 +196,21 @@ class IncAF(AF):
         for arg in range(af.n):
             if af.A[arg] == IncAF.POSSIBLE_ARGUMENT:
                 possible_arguments.append(arg)
-        return af.is_necessarily_acceptable_rec_incaf(a, args, possible_attacks, len(possible_attacks),
-                                                      possible_arguments, len(possible_arguments))
+        return af.necessarily_satisfied_rec(condition, possible_attacks, len(possible_attacks),
+                                            possible_arguments, len(possible_arguments))
 
-    def is_necessarily_acceptable_rec_incaf(self, a, args, possible_attacks, k_att, possible_arguments, k_arg):
+    def necessarily_satisfied_rec(self, condition, possible_attacks, k_att, possible_arguments, k_arg):
         if k_att == 0:
             if k_arg == 0:
-                return self.is_acceptable(a, args)
+                return condition(self)
 
             k_arg -= 1
             possible_argument = possible_arguments[k_arg]
             self.set_argument(possible_argument, IncAF.DEFINITE_ARGUMENT)
-            if not self.is_necessarily_acceptable_rec_incaf(a, args, possible_attacks, k_att,
-                                                            possible_arguments, k_arg):
+            if not self.necessarily_satisfied_rec(condition, possible_attacks, k_att, possible_arguments, k_arg):
                 return False
             self.set_argument(possible_argument, IncAF.NO_ARGUMENT)
-            if not self.is_necessarily_acceptable_rec_incaf(a, args, possible_attacks, k_att,
-                                                            possible_arguments, k_arg):
+            if not self.necessarily_satisfied_rec(condition, possible_attacks, k_att, possible_arguments, k_arg):
                 return False
             self.set_argument(possible_argument, IncAF.POSSIBLE_ARGUMENT)
             return True
@@ -282,10 +218,10 @@ class IncAF(AF):
         k_att -= 1
         possible_attack = possible_attacks[k_att]
         self.set_attack(possible_attack[0], possible_attack[1], IncAF.DEFINITE_ATTACK)
-        if not self.is_necessarily_acceptable_rec_incaf(a, args, possible_attacks, k_att, possible_arguments, k_arg):
+        if not self.necessarily_satisfied_rec(condition, possible_attacks, k_att, possible_arguments, k_arg):
             return False
         self.set_attack(possible_attack[0], possible_attack[1], IncAF.NO_ATTACK)
-        if not self.is_necessarily_acceptable_rec_incaf(a, args, possible_attacks, k_att, possible_arguments, k_arg):
+        if not self.necessarily_satisfied_rec(condition, possible_attacks, k_att, possible_arguments, k_arg):
             return False
         self.set_attack(possible_attack[0], possible_attack[1], IncAF.POSSIBLE_ATTACK)
         return True
