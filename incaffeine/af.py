@@ -393,3 +393,54 @@ class AF(object):
             return self.is_preferred(args)
         print('warning: unknown semantics used for verification: %d', int(semantics))
         return False
+
+    def credulously_satisfied(self, condition):
+        af = copy.deepcopy(self)
+        args = set()
+        n_current = 0
+        n_max = self.n
+        return af.credulously_satisfied_rec(condition, args, n_current, n_max)
+
+    def credulously_satisfied_rec(self, condition, args, n_current, n_max):
+        if n_current == n_max:
+            return condition(self)
+        n_current += 1
+        if self.credulously_satisfied_rec(condition, args, n_current, n_max):
+            return True
+        args.add(n_current)
+        if self.credulously_satisfied_rec(condition, args, n_current, n_max):
+            return True
+        args.remove(n_current)
+        return False
+
+    def skeptically_satisfied(self, condition):
+        af = copy.deepcopy(self)
+        args = set()
+        n_current = 0
+        n_max = self.n
+        return af.skeptically_satisfied_rec(condition, args, n_current, n_max)
+
+    def skeptically_satisfied_rec(self, condition, args, n_current, n_max):
+        if n_current == n_max:
+            return condition(self)
+        n_current += 1
+        if not self.skeptically_satisfied_rec(condition, args, n_current, n_max):
+            return False
+        args.add(n_current)
+        if not self.skeptically_satisfied_rec(condition, args, n_current, n_max):
+            return False
+        args.remove(n_current)
+        return True
+
+    def is_credulously_acceptable(self, arg, args, semantics):
+        def condition(af):
+            return af.is_acceptable(arg, args, semantics)
+        return self.credulously_satisfied(condition)
+
+    def is_skeptically_acceptable(self, arg, args, semantics):
+        def condition(af):
+            return af.is_acceptable(arg, args, semantics)
+        return self.skeptically_satisfied(condition)
+
+
+
