@@ -434,13 +434,14 @@ class AF(object):
 
     def is_credulously_acceptable(self, arg, args, semantics):
         def condition(af):
-            return af.is_acceptable(arg, args, semantics)
+            if af.verification(args, semantics):
+                return arg in args
+            return False
         return self.credulously_satisfied(condition)
 
     def is_skeptically_acceptable(self, arg, args, semantics):
         def condition(af):
-            return af.is_acceptable(arg, args, semantics)
+            if af.verification(args, semantics):
+                return arg in args
+            return True
         return self.skeptically_satisfied(condition)
-
-
-
