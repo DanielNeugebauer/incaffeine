@@ -105,19 +105,20 @@ class InstanceGenerator:
         # 3: 1,2 possible, others definite
         # ...
         # 2^n - 1: all possible
+        base = 2  # size of value space for argument statuses
         for arg in range(self.n):
             self.af.set_argument(arg, IncAF.DEFINITE_ARGUMENT)
             if self.use_uncertain_args:
-                state = args_state_code % (2 ** (arg + 1))
+                # state = args_state_code % (2 ** (arg + 1))
+                state = (args_state_code // math.pow(base, arg)) % base
                 if state == 1:
                     self.af.set_argument(arg, IncAF.POSSIBLE_ARGUMENT)
 
         # attack state
         # 0: all attacks missing
-        base = 3 if self.use_uncertain_attacks else 2
+        base = 3 if self.use_uncertain_attacks else 2  # size of value space for attack statuses
         for attacker in range(self.n):
             for target in range(self.n):
-                # state = attacks_state_code % math.pow(base, (self.n * attacker) + target + 1)
                 state = (attacks_state_code // math.pow(base, (self.n * attacker) + target)) % base
                 if state == 0:
                     self.af.set_attack(attacker, target, IncAF.NO_ATTACK)

@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import sys
 from runner import TestRunner
 
@@ -5,18 +7,18 @@ print('Script start... ------------------------------------')
 print('Testing dummy...')
 
 
-def test_instance(af, args, arg):
+def check_instance(runner, af, args, arg):
     # TODO implement instance test here!
     return True
 
 
-def reference_test_instance(af, args, arg):
+def reference_check_instance(runner, af, args, arg):
     # TODO call reference instance test here!
-    return False
+    return True
 
 
 def main(argv):
-    runner = TestRunner(test_instance, reference_test_instance)
+    runner = TestRunner(check_instance, reference_check_instance)
 
     # Config
     runner.apply_params(argv)
@@ -24,6 +26,9 @@ def main(argv):
     runner.use_argument = False
     runner.use_uncertain_args = False
     runner.use_uncertain_attacks = True
+
+    runner.log_on_success = False
+    runner.logger_results = sys.stdout
 
     # Run!
     runner.run()

@@ -17,4 +17,8 @@ flake8:
     - flake8 .
   allow_failure: true
 
-
+unittests:
+  stage: test
+  script:
+    - pip install --quiet -r requirements.txt
+    - py.test tests

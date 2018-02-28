@@ -26,6 +26,10 @@ class TestRunner(object):
     test_instance = None
     reference_test_instance = None
 
+    # config behaviour
+    exit_on_failure = False  # Default: don't abort on first failure
+    abort_now = False  # internal, is set for graceful abortion
+
     # instance generation configuration
     n_min = 1  # Default: start on instances with n=1
     n_max = 3  # Default: go until instances with n=3
@@ -42,6 +46,10 @@ class TestRunner(object):
     log_on_success = False  # Default: do not log successful instances
     log_on_failure = True  # Default: log failed instances
 
+    # internals
+    success_count = 0
+    total_count = 0
+
     def __init__(self, test_instance, reference_test_instance):
         self.test_instance = test_instance
         self.reference_test_instance = reference_test_instance
@@ -57,7 +65,7 @@ class TestRunner(object):
             opts, args = getopt.getopt(argv, "", ["nMax=", "nMin=", "rand=", "log="])
         except getopt.GetoptError:
             print("invalid option(s)")
-            sys.exit(2)
+            sys.exit(2)  # TODO better error handling!
         for opt, arg in opts:
             if opt == '--nMax':
                 self.n_max = int(arg)
@@ -97,6 +105,7 @@ class TestRunner(object):
         self.logger_status.write(self.logger_status_prefix + str(msg) + '\n')
 
     def run(self):
+        self.abort_now = False
         n = self.n_min
         while n <= self.n_max:
             self.log_status('Start testing n=' + str(n))
@@ -104,6 +113,8 @@ class TestRunner(object):
                                           self.use_uncertain_args, self.use_uncertain_attacks)
             self.log_status('\tnumber of instances: ' + str(generator.total_count))
             self.run_single(generator)
+            if self.abort_now:
+                return
             n += 1
 
     def run_single(self, generator):
@@ -116,35 +127,50 @@ class TestRunner(object):
         for instance in generator.next():
             if not instance:
                 return
-            result = self.test_instance(instance.af, instance.extension, instance.arg)
-            reference_result = self.reference_test_instance(instance.af, instance.extension, instance.arg)
+            result = self.test_instance(self, instance.af, instance.extension, instance.arg)
+            reference_result = self.reference_test_instance(self, instance.af, instance.extension, instance.arg)
             equivalent = (result == reference_result)
+            self.total_count += 1
             if equivalent:
                 # success
+                self.success_count += 1
                 if self.log_on_success:
                     self.log_result(generator, instance, result, reference_result)
             else:
                 # failure
                 if self.log_on_failure:
                     self.log_result(generator, instance, result, reference_result)
+                if self.exit_on_failure:
+                    self.abort_now = True
+                    return
 
     def log_result(self, generator, instance, result, reference_result):
-        self.logger_results.write('-------------------------------\n')
-        self.logger_results.write('instance number: ' + str(generator.current_count) + '/'
-                                  + str(generator.total_count) + '\n')
+        if self.logger_results:
+            self.logger_results.write('-------------------------------\n')
+            self.logger_results.write('instance number: ' + str(generator.current_count) + '/'
+                                      + str(generator.total_count) + '\n')
+            self.log_af(instance.af)
+            if self.use_extension:
+                self.log_extension(instance.extension)
+            if self.use_argument:
+                self.log_argument(instance.arg)
+            self.logger_results.write('\theuristic result: ')
+            self.logger_results.write(str(result))
+            self.logger_results.write('\n\tbrute force result: ')
+            self.logger_results.write(str(reference_result))
+            self.logger_results.write('\n')
+
+    def log_af(self, af):
         self.logger_results.write('AF:')
         self.logger_results.write('\n\tArguments: ')
-        self.logger_results.write('\t' + str(instance.af.A))
+        self.logger_results.write('\t' + str(af.A))
         self.logger_results.write('\n\tAttacks:\n')
-        for attacker in range(instance.af.n):
-            self.logger_results.write('\t' + str(instance.af.R[attacker]))
+        for attacker in range(af.n):
+            self.logger_results.write('\t' + str(af.R[attacker]))
             self.logger_results.write('\n')
-        if generator.use_extension:
-            self.logger_results.write('extension: ' + str(instance.extension) + '\n')
-        if generator.use_argument:
-            self.logger_results.write('arg: ' + str(instance.arg) + '\n')
-        self.logger_results.write('\theuristic result: ')
-        self.logger_results.write(str(result))
-        self.logger_results.write('\n\tbrute force result: ')
-        self.logger_results.write(str(reference_result))
-        self.logger_results.write('\n')
+
+    def log_extension(self, extension):
+        self.logger_results.write('extension: ' + str(extension) + '\n')
+
+    def log_argument(self, arg):
+        self.logger_results.write('arg: ' + str(arg) + '\n')
