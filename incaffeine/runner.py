@@ -50,20 +50,21 @@ class TestRunner(object):
             else:
                 # failure
                 self.logger.write('-------------------------------\n')
-                if self.generator.use_extension:
-                    self.logger.write('extension: ')
-                    self.logger.write(str(instance.extension))
-                if self.generator.use_argument:
-                    self.logger.write('arg: ' + str(instance.arg))
-                self.logger.write('\nAF:')
+                self.logger.write('instance number: ' + str(self.generator.current_count) + '/'
+                                  + str(self.generator.total_count) + '\n')
+                self.logger.write('AF:')
                 self.logger.write('\n\tArguments: ')
                 self.logger.write('\t' + str(instance.af.A))
                 self.logger.write('\n\tAttacks:\n')
                 for attacker in range(instance.af.n):
                     self.logger.write('\t' + str(instance.af.R[attacker]))
                     self.logger.write('\n')
-                self.logger.write('\theuristic result: ')
-                self.logger.write(str(result))
-                self.logger.write('\n\tbrute force result: ')
-                self.logger.write(str(reference_result))
-                self.logger.write('\n')
+                if self.generator.use_extension:
+                    self.logger.write('extension: ' + str(instance.extension) + '\n')
+                if self.generator.use_argument:
+                    self.logger.write('arg: ' + str(instance.arg) + '\n')
+                # self.logger.write('\theuristic result: ')
+                # self.logger.write(str(result))
+                # self.logger.write('\n\tbrute force result: ')
+                # self.logger.write(str(reference_result))
+                # self.logger.write('\n')

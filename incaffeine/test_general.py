@@ -1,6 +1,6 @@
 import sys
 import getopt
-from test_runner import TestRunner
+from runner import TestRunner
 from instance_generator import InstanceGenerator
 
 print('Script start... ------------------------------------')
@@ -42,15 +42,16 @@ def main(argv):
 
     # Config
     use_extension = False
-    use_argument = True
+    use_argument = False
     use_uncertain_args = False
-    use_uncertain_attacks = True
+    use_uncertain_attacks = False
 
     n = n_min
     while n <= n_max:
         print('Start testing n=' + str(n))
         generator = InstanceGenerator(n, randomized, use_extension, use_argument, use_uncertain_args,
                                       use_uncertain_attacks)
+        print('Estimated total count=' + str(generator.total_count))
         runner = TestRunner(generator, test_instance, reference_test_instance)
         runner.run()
         n += 1

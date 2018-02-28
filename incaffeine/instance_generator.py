@@ -1,4 +1,5 @@
 import math
+from random import randrange
 
 from incaf import IncAF
 """
@@ -27,8 +28,8 @@ config of instance generator:
 
 
 class InstanceGenerator:
-    currentCount = 0
-    totalCount = 0
+    current_count = 0
+    total_count = 0
 
     n = None
     af = None
@@ -50,30 +51,44 @@ class InstanceGenerator:
         self.number_of_argument_states = 2 if use_uncertain_args else 1
         self.number_of_attacks = (n ** 2)
         self.number_of_attack_states = 3 if use_uncertain_attacks else 2
-        self.totalCount += (self.number_of_extensions * self.number_of_single_args *
-                            self.number_of_argument_states ** self.number_of_arguments *
-                            self.number_of_attack_states ** self.number_of_attacks)
-        self.currentCount = 0
+        self.total_count += (self.number_of_extensions * self.number_of_single_args *
+                             self.number_of_argument_states ** self.number_of_arguments *
+                             self.number_of_attack_states ** self.number_of_attacks)
+        self.current_count = 0
 
     def next(self):
-        for args_state in range(self.number_of_argument_states ** self.number_of_arguments):
-            for attacks_state in range(self.number_of_attack_states ** self.number_of_attacks):
-                for extension_code in range(self.number_of_extensions):
-                    for arg_code in range(self.number_of_single_args):
+        for args_state in range(0, self.number_of_argument_states ** self.number_of_arguments):
+            for attacks_state in range(0, self.number_of_attack_states ** self.number_of_attacks):
+                for extension_code in range(0, self.number_of_extensions):
+                    for arg_code in range(0, self.number_of_single_args):
                         self.generate(args_state=args_state,
                                       attacks_state=attacks_state,
                                       extension=extension_code,
                                       argument=arg_code)
+                        self.current_count += 1
                         yield self
-                        self.currentCount += 1
+                        print('DEBUG: args_state=' + str(args_state) + ' attacks_state=' + str(attacks_state) +
+                              ' extension=' + str(extension_code) + ' argument=' + str(arg_code))
+
+    def next_randomized(self):
+        while True:  # TODO
+            args_state = randrange(0, self.number_of_argument_states ** self.number_of_arguments)
+            attacks_state = randrange(0, self.number_of_attack_states ** self.number_of_attacks)
+            extension_code = randrange(0, self.number_of_extensions)
+            arg_code = randrange(0, self.number_of_single_args)
+            self.generate(args_state=args_state,
+                          attacks_state=attacks_state,
+                          extension=extension_code,
+                          argument=arg_code)
+            self.current_count += 1
+            yield self
 
     def generate(self, **seed):
         """
-        code of number n of args: [1 ... inf]
-        code of argument states: [1 ... 2^n]
-        code of attack states: [1 ... 3^(n^2)]
+        code of argument states: [0 ... (2^n - 1)]
+        code of attack states: [0 ... (3^(n^2) - 1)]
         code argument set ("extension"): [0 ... n]
-        code of distinguished arg: [1 ... n]
+        code of distinguished arg: [0 ... (n-1)]
 
         :param seed: instance parameter seed
         :return: af representing the seed
@@ -89,19 +104,20 @@ class InstanceGenerator:
         # 2: 2 possible, others definite
         # 3: 1,2 possible, others definite
         # ...
-        # 2^n: all possible
+        # 2^n - 1: all possible
         for arg in range(self.n):
-            state = args_state_code % (2 ** (arg + 1))
-            if state == 0:
-                self.af.set_argument(arg, IncAF.DEFINITE_ARGUMENT)
-            elif state == 1:
-                self.af.set_argument(arg, IncAF.POSSIBLE_ARGUMENT)
+            self.af.set_argument(arg, IncAF.DEFINITE_ARGUMENT)
+            if self.use_uncertain_args:
+                state = args_state_code % (2 ** (arg + 1))
+                if state == 1:
+                    self.af.set_argument(arg, IncAF.POSSIBLE_ARGUMENT)
 
         # attack state
         # 0: all attacks missing
+        base = 3 if self.use_uncertain_attacks else 2
         for attacker in range(self.n):
             for target in range(self.n):
-                state = attacks_state_code % math.pow(3, (self.n * attacker) + target + 1)
+                state = attacks_state_code % math.pow(base, (self.n * attacker) + target + 1)
                 if state == 0:
                     self.af.set_attack(attacker, target, IncAF.NO_ATTACK)
                 elif state == 1:
