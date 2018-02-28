@@ -117,7 +117,8 @@ class InstanceGenerator:
         base = 3 if self.use_uncertain_attacks else 2
         for attacker in range(self.n):
             for target in range(self.n):
-                state = attacks_state_code % math.pow(base, (self.n * attacker) + target + 1)
+                # state = attacks_state_code % math.pow(base, (self.n * attacker) + target + 1)
+                state = (attacks_state_code // math.pow(base, (self.n * attacker) + target)) % base
                 if state == 0:
                     self.af.set_attack(attacker, target, IncAF.NO_ATTACK)
                 elif state == 1:
