@@ -1,7 +1,7 @@
 import sys
 import getopt
 import datetime
-from instance_generator import InstanceGenerator
+from incaffeine.instance_generator import InstanceGenerator
 
 
 class TestRunner(object):

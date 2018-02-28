@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
-from runner import TestRunner
+from incaffeine.runner import TestRunner
 
 print('Script start... ------------------------------------')
 print('Testing dummy...')

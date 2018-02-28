@@ -1,5 +1,5 @@
 import copy
-from af import AF
+from incaffeine.af import AF
 
 
 class IncAF(AF):

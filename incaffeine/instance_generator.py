@@ -1,33 +1,33 @@
 import math
 from random import randrange
-
-from incaf import IncAF
-"""
-Generate instances based on seeds!
-  - for each instance feature (see below), seed space is a contiguous sequence [1 2 ... k], k = size of feature space
-    - code of number n of args: [1 ... inf]
-    - code of argument states: [1 ... 2^n]
-    - code of attack states: [1 ... 3^(n^2)]
-    - code argument set ("extension"): [0 ... n]
-    - code of distinguished arg: [1 ... n]
-  - generator yields concrete instances
-    - internal function generates instance for a given seed
-      - keeps one single mutable instance(?)
-      - maybe use different generator implementations for exhaustive and specific generation?
-  - randomization of instances can be done by pure numeric randomization of seed space
-
-config of instance generator:
-- number arguments (fixed!)
-- number arguments
-- include uncertain args?
-  - randomize uncertain args?
-- include incomplete attacks?
-- include a set of args? (ranges from [1] to [1 ... n])
-- include a single arg? (ranges from 1 to n)
-"""
+from incaffeine.incaf import IncAF
 
 
 class InstanceGenerator:
+    """
+    Generate instances based on seeds!
+      - for each instance feature (see below), seed space is a contiguous sequence [1 2 ... k], k = size of feature space
+        - code of number n of args: [1 ... inf]
+        - code of argument states: [1 ... 2^n]
+        - code of attack states: [1 ... 3^(n^2)]
+        - code argument set ("extension"): [0 ... n]
+        - code of distinguished arg: [1 ... n]
+      - generator yields concrete instances
+        - internal function generates instance for a given seed
+          - keeps one single mutable instance(?)
+          - maybe use different generator implementations for exhaustive and specific generation?
+      - randomization of instances can be done by pure numeric randomization of seed space
+
+    config of instance generator:
+    - number arguments (fixed!)
+    - number arguments
+    - include uncertain args?
+      - randomize uncertain args?
+    - include incomplete attacks?
+    - include a set of args? (ranges from [1] to [1 ... n])
+    - include a single arg? (ranges from 1 to n)
+    """
+
     current_count = 0
     total_count = 0
 
