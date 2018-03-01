@@ -1,6 +1,8 @@
 import copy
 from random import randrange
 
+from incaffeine.helpers import powerset
+
 
 class AF(object):
     """
@@ -121,7 +123,7 @@ class AF(object):
         do not have status DEFINITE_ARGUMENT in this AF.
 
         :param s: set of arguments
-        :type s: set
+        :type s: iterable
         :return: set of arguments
         """
         s2 = set()
@@ -176,9 +178,9 @@ class AF(object):
         Both attacker and target may be a single argument (int) or a set of multiple arguments.
 
         :param attacker: single attacking argument or set of attacking arguments
-        :type attacker: int or set
+        :type attacker: int or iterable
         :param target: single target argument or set of target arguments
-        :type target: int or set
+        :type target: int or iterable
         :return: true if at least one attacker attacks at least one target, False otherwise
         """
         if type(attacker) is int:
@@ -236,7 +238,7 @@ class AF(object):
         Indicates whether the given set of arguments is conflict-free in this AF.
 
         :param s: set of arguments
-        :type s: set
+        :type s: iterable
         :return: True if s is conflict-free, False otherwise
         """
         s = self.restricted_extension(s)
@@ -255,7 +257,7 @@ class AF(object):
         :param a: the argument to be checked for acceptability
         :type a: int
         :param s: set of arguments
-        :type s: set
+        :type s: iterable
         :return: True if a is acceptable with respect to s in self, False otherwise
         """
         s = self.restricted_extension(s)
@@ -271,7 +273,7 @@ class AF(object):
         Indicates whether the given set of arguments is admissible in this AF.
 
         :param s: set of arguments
-        :type s: set
+        :type s: iterable
         :return: True if s is admissible, False otherwise
         """
         s = self.restricted_extension(s)
@@ -287,7 +289,7 @@ class AF(object):
         Indicates whether the given set of arguments is stable in this AF.
 
         :param s: set of arguments
-        :type s: set
+        :type s: iterable
         :return: True if s is stable, False otherwise
         """
         s = self.restricted_extension(s)
@@ -304,7 +306,7 @@ class AF(object):
         Indicates whether the given set of arguments is grounded in this AF.
 
         :param s: set of arguments
-        :type s: set
+        :type s: iterable
         :return: True if s is grounded, False otherwise
         """
         s = self.restricted_extension(s)
@@ -315,7 +317,7 @@ class AF(object):
         Indicates whether the given set of arguments is complete in this AF.
 
         :param s: set of arguments
-        :type s: set
+        :type s: iterable
         :return: True if s is complete, False otherwise
         """
         s = self.restricted_extension(s)
@@ -331,7 +333,7 @@ class AF(object):
         Indicates whether the given set of arguments is preferred in this AF.
 
         :param s: set of arguments
-        :type s: set
+        :type s: iterable
         :return: True if s is preferred, False otherwise
         """
         s = self.restricted_extension(s)
@@ -354,12 +356,12 @@ class AF(object):
         An argument s is dominated by an argument t if t is a strict admissible superset of s.
         Intended for internal use in is_preferred!
 
-        :param s: first argument
-        :type s: set
-        :param t: second argument
-        :type t: set
+        :param s: first set
+        :type s: iterable
+        :param t: second set
+        :type t: iterable
         :param possible_args: candidates to be added to t
-        :type possible_args: list
+        :type possible_args: iterable
         :param k: length of possible_args
         :type k: int
         :return: True if the first set is dominated by the second set in self, False otherwise
@@ -432,16 +434,28 @@ class AF(object):
         args.remove(n_current)
         return True
 
-    def is_credulously_acceptable(self, arg, args, semantics):
+    def is_credulously_acceptable(self, arg, semantics):
         def condition(af):
-            if af.verification(args, semantics):
-                return arg in args
+            # check all arg sets INCLUDING arg: if one of them is an extension, return True
+            arg_range = [i for i in range(self.n)]
+            arg_range.remove(arg)
+            for base_tuple in powerset(arg_range):
+                superset = set(base_tuple)
+                superset.add(arg)
+                if af.verification(superset, semantics):
+                    return True
             return False
         return self.credulously_satisfied(condition)
 
-    def is_skeptically_acceptable(self, arg, args, semantics):
+    def is_skeptically_acceptable(self, arg, semantics):
         def condition(af):
-            if af.verification(args, semantics):
-                return arg in args
+            # check all arg sets EXCLUDING arg: if one of them is an extension, return False
+            arg_range = [i for i in range(self.n)]
+            arg_range.remove(arg)
+            for base_tuple in powerset(arg_range):
+                superset = set(base_tuple)
+                if af.verification(superset, semantics):
+                    return False
             return True
         return self.skeptically_satisfied(condition)
+

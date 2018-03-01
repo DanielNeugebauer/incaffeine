@@ -144,24 +144,24 @@ class IncAF(AF):
             return af.is_acceptable(arg, args)
         return self.necessarily_satisfied(condition)
 
-    def is_possibly_credulously_acceptable(self, args, arg, semantics):
+    def is_possibly_credulously_acceptable(self, arg, semantics):
         def condition(af):
-            return af.is_credulously_acceptable(arg, args, semantics)
+            return af.is_credulously_acceptable(arg, semantics)
         return self.possibly_satisfied(condition)
 
-    def is_necessarily_credulously_acceptable(self, args, arg, semantics):
+    def is_necessarily_credulously_acceptable(self, arg, semantics):
         def condition(af):
-            return af.is_credulously_acceptable(arg, args, semantics)
+            return af.is_credulously_acceptable(arg, semantics)
         return self.necessarily_satisfied(condition)
 
-    def is_possibly_skeptically_acceptable(self, args, arg, semantics):
+    def is_possibly_skeptically_acceptable(self, arg, semantics):
         def condition(af):
-            return af.is_skeptically_acceptable(arg, args, semantics)
+            return af.is_skeptically_acceptable(arg, semantics)
         return self.possibly_satisfied(condition)
 
-    def is_necessarily_skeptically_acceptable(self, args, arg, semantics):
+    def is_necessarily_skeptically_acceptable(self, arg, semantics):
         def condition(af):
-            return af.is_skeptically_acceptable(arg, args, semantics)
+            return af.is_skeptically_acceptable(arg, semantics)
         return self.necessarily_satisfied(condition)
 
     def possibly_satisfied(self, condition):
