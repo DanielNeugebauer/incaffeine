@@ -2,6 +2,9 @@
 
 import sys
 from incaffeine.runner import TestRunner
+"""
+Script template - extend this to implement a custom instance checker. 
+"""
 
 print('Script start... ------------------------------------')
 print('Testing dummy...')
