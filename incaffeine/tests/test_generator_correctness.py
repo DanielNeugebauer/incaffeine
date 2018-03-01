@@ -4,10 +4,8 @@ import unittest
 import sys
 import copy
 sys.path.append('../')
-from incaffeine.runner import TestRunner
 
-print('Script start... ------------------------------------')
-print('Testing generator correctness...')
+from incaffeine.runner import TestRunner
 
 previous_instances = []
 
@@ -392,5 +390,3 @@ class TestGeneratorCorrectness(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-
-print("...finished ----------------------------------------")

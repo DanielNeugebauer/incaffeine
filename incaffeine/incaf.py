@@ -136,12 +136,12 @@ class IncAF(AF):
 
     def is_possibly_acceptable(self, args, arg):
         def condition(af):
-            return af.is_acceptable(arg, args)
+            return af.is_defended_by(arg, args)
         return self.possibly_satisfied(condition)
 
     def is_necessarily_acceptable(self, args, arg):
         def condition(af):
-            return af.is_acceptable(arg, args)
+            return af.is_defended_by(arg, args)
         return self.necessarily_satisfied(condition)
 
     def is_possibly_credulously_acceptable(self, arg, semantics):

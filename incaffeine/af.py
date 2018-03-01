@@ -1,4 +1,5 @@
 import copy
+import sys
 from random import randrange
 
 from incaffeine.helpers import powerset
@@ -40,9 +41,6 @@ class AF(object):
         self.R = [[AF.NO_ATTACK for _ in range(n)] for _ in range(n)]
         """(list) attack statuses for each pair of arguments"""
 
-        self.name_for_argument = {}
-        self.argument_for_name = {}
-
     def __eq__(self, other):
         if isinstance(other, self.__class__):
             if self.n != other.n:
@@ -61,76 +59,16 @@ class AF(object):
     def __ne__(self, other):
         return not self.__eq__(other)
 
-    def set_argument_name(self, arg, name):
-        """
-        Remember the given name for the given argument.
-
-        :param arg: ID of an argument in this AF
-        :type arg: int
-        :param name: name for the argument
-        :type name: str
-        """
-        self.name_for_argument[arg] = name
-        self.argument_for_name[name] = arg
-
-    def get_name_for_argument(self, arg):
-        """
-        Return the name of the given argument.
-
-        :param arg: argument ID in [0,...,self.n-1]
-        :type arg: int
-        :return: name of the given argument
-        """
-        if arg in self.name_for_argument:
-            return self.name_for_argument[arg]
-        return arg
-
-    def get_argument_for_name(self, name):
-        """
-        Return the argument that represents the given name in this AF.
-
-        :param name: argument name
-        :type name: str
-        :return: argument ID of the given statement
-        """
-        if name in self.argument_for_name:
-            return self.argument_for_name[name]
-        return name
-
-    def merge_with_af(self, other):
-        """
-        Merge self with the other given AF into a new argumentation framework.
-
-        The new AF has the union of the arguments and attacks from self and other.
-
-        :param other: the af to merge with
-        :type other: AF
-        :return: a new AF that represents the union of self and other
-        """
-        n = self.n + other.n
-        new = self.__class__(n)
-        for attacker in range(self.n):
-            for target in range(self.n):
-                new.set_attack(attacker, target, self.R[attacker][target])
-        for attacker in range(other.n):
-            for target in range(other.n):
-                new.set_attack(attacker + self.n, target + self.n, other.R[attacker][target])
-        return new
-
-    def restricted_extension(self, s):
+    def restricted_extension(self, args):
         """
         Create a copy of the given set of arguments without those arguments that
         do not have status DEFINITE_ARGUMENT in this AF.
 
-        :param s: set of arguments
-        :type s: iterable
+        :param args: set of arguments
+        :type args: iterable
         :return: set of arguments
         """
-        s2 = set()
-        for a in range(self.n):
-            if (a in s) and (self.A[a] == AF.DEFINITE_ARGUMENT):
-                s2.add(a)
-        return s2
+        return set(a for a in args if self.A[a] == AF.DEFINITE_ARGUMENT)
 
     def randomize_attacks(self):
         """
@@ -164,18 +102,22 @@ class AF(object):
         """
         self.A[argument] = value
 
-    def pretty_print(self):
+    def pretty_print(self, output_handle=sys.stdout):
         """
         Print a human readable representation of this AF to stdout.
+
+        :param output_handle: output stream or file handle (default: stdout)
+        :return:
         """
         for attacker in range(self.n):
-            print(str(self.R[attacker]))
+            output_handle.write(str(self.R[attacker]))
+            output_handle.write('\n')
 
     def attacks(self, attacker, target):
         """
         Indicates whether whether there is a definite attack from attacker to target in this AF.
 
-        Both attacker and target may be a single argument (int) or a set of multiple arguments.
+        Both attacker and target may be a single argument (int) or an iterable over multiple arguments.
 
         :param attacker: single attacking argument or set of attacking arguments
         :type attacker: int or iterable
@@ -218,166 +160,166 @@ class AF(object):
 
         :return: set of arguments representing the grounded extension
         """
-        s = set()
-        s_next = set()
+        args = set()
+        args_next = set()
         for a in range(self.n):
             if self.A[a] == AF.DEFINITE_ARGUMENT:
-                if self.is_acceptable(a, s):
-                    s_next.add(a)
-        while s != s_next:
-            s = s_next
-            s_next = set()
+                if self.is_defended_by(a, args):
+                    args_next.add(a)
+        while args != args_next:
+            args = args_next
+            args_next = set()
             for a in range(self.n):
                 if self.A[a] == AF.DEFINITE_ARGUMENT:
-                    if self.is_acceptable(a, s):
-                        s_next.add(a)
-        return s
+                    if self.is_defended_by(a, args):
+                        args_next.add(a)
+        return args
 
-    def is_conflict_free(self, s):
+    def is_conflict_free(self, args):
         """
         Indicates whether the given set of arguments is conflict-free in this AF.
 
-        :param s: set of arguments
-        :type s: iterable
-        :return: True if s is conflict-free, False otherwise
+        :param args: set of arguments
+        :type args: iterable
+        :return: True if args is conflict-free, False otherwise
         """
-        s = self.restricted_extension(s)
-        for attacker in s:
-            for target in s:
+        args = self.restricted_extension(args)
+        for attacker in args:
+            for target in args:
                 if self.R[attacker][target] == AF.DEFINITE_ATTACK:
                     return False
         return True
 
-    def is_acceptable(self, a, s):
+    def is_defended_by(self, a, args):
         """
-        Indicates whether the given argument is acceptable with respect to the given set of arguments in this AF.
+        Indicates whether the given argument is defended by the given set of arguments in this AF.
 
         Always returns True if the argument does not have status DEFINITE_ARGUMENT in self.
 
-        :param a: the argument to be checked for acceptability
+        :param a: the argument to be checked
         :type a: int
-        :param s: set of arguments
-        :type s: iterable
-        :return: True if a is acceptable with respect to s in self, False otherwise
+        :param args: defending set of arguments
+        :type args: iterable
+        :return: True if a is acceptable with respect to args in self, False otherwise
         """
-        s = self.restricted_extension(s)
+        args = self.restricted_extension(args)
         if self.A[a] == AF.DEFINITE_ARGUMENT:
             for attacker in range(self.n):
                 if (self.A[attacker] == AF.DEFINITE_ARGUMENT) and (self.R[attacker][a] == AF.DEFINITE_ATTACK):
-                    if not self.attacks(s, attacker):
+                    if not self.attacks(args, attacker):
                         return False
         return True
 
-    def is_admissible(self, s):
+    def is_admissible(self, args):
         """
         Indicates whether the given set of arguments is admissible in this AF.
 
-        :param s: set of arguments
-        :type s: iterable
-        :return: True if s is admissible, False otherwise
+        :param args: set of arguments
+        :type args: iterable
+        :return: True if args is admissible, False otherwise
         """
-        s = self.restricted_extension(s)
-        if not self.is_conflict_free(s):
+        args = self.restricted_extension(args)
+        if not self.is_conflict_free(args):
             return False
-        for a in s:
-            if not self.is_acceptable(a, s):
+        for a in args:
+            if not self.is_defended_by(a, args):
                 return False
         return True
 
-    def is_stable(self, s):
+    def is_stable(self, args):
         """
         Indicates whether the given set of arguments is stable in this AF.
 
-        :param s: set of arguments
-        :type s: iterable
-        :return: True if s is stable, False otherwise
+        :param args: set of arguments
+        :type args: iterable
+        :return: True if args is stable, False otherwise
         """
-        s = self.restricted_extension(s)
-        if not self.is_conflict_free(s):
+        args_restricted = self.restricted_extension(args)
+        if not self.is_conflict_free(args_restricted):
             return False
         for target in range(self.n):
-            if target not in s:
-                if not self.attacks(s, target):
+            if target not in args:
+                if (self.A[target] == AF.DEFINITE_ARGUMENT) and not self.attacks(args_restricted, target):
                     return False
         return True
 
-    def is_grounded(self, s):
+    def is_grounded(self, args):
         """
         Indicates whether the given set of arguments is grounded in this AF.
 
-        :param s: set of arguments
-        :type s: iterable
-        :return: True if s is grounded, False otherwise
+        :param args: set of arguments
+        :type args: iterable
+        :return: True if args is grounded, False otherwise
         """
-        s = self.restricted_extension(s)
-        return self.grounded_extension() == s
+        args = self.restricted_extension(args)
+        return self.grounded_extension() == args
 
-    def is_complete(self, s):
+    def is_complete(self, args):
         """
         Indicates whether the given set of arguments is complete in this AF.
 
-        :param s: set of arguments
-        :type s: iterable
-        :return: True if s is complete, False otherwise
+        :param args: set of arguments
+        :type args: iterable
+        :return: True if args is complete, False otherwise
         """
-        s = self.restricted_extension(s)
-        if not self.is_admissible(s):
+        args = self.restricted_extension(args)
+        if not self.is_admissible(args):
             return False
         for a in range(self.n):
-            if (self.A[a] == AF.DEFINITE_ARGUMENT) and (a not in s) and (self.is_acceptable(a, s)):
+            if (self.A[a] == AF.DEFINITE_ARGUMENT) and (a not in args) and (self.is_defended_by(a, args)):
                 return False
         return True
 
-    def is_preferred(self, s):
+    def is_preferred(self, args):
         """
         Indicates whether the given set of arguments is preferred in this AF.
 
-        :param s: set of arguments
-        :type s: iterable
-        :return: True if s is preferred, False otherwise
+        :param args: set of arguments
+        :type args: iterable
+        :return: True if args is preferred, False otherwise
         """
-        s = self.restricted_extension(s)
-        if not self.is_admissible(s):
+        args = self.restricted_extension(args)
+        if not self.is_admissible(args):
             return False
-        t = copy.deepcopy(s)
+        args2 = copy.deepcopy(args)
         possible_args = []
         for argument in range(self.n):
             if self.A[argument] == AF.DEFINITE_ARGUMENT \
-                    and argument not in s \
-                    and not self.attacks(argument, s) \
-                    and not self.attacks(s, argument):
+                    and argument not in args \
+                    and not self.attacks(argument, args) \
+                    and not self.attacks(args, argument):
                 possible_args.append(argument)
-        return not self.is_dominated(s, t, possible_args, len(possible_args))
+        return not self.is_dominated(args, args2, possible_args, len(possible_args))
 
-    def is_dominated(self, s, t, possible_args, k):
+    def is_dominated(self, args1, args2, possible_args, k):
         """
         Indicates whether the first set of arguments is dominated by the second set of arguments in this AF.
 
-        An argument s is dominated by an argument t if t is a strict admissible superset of s.
+        A set args1 is dominated by a set args2 if args2 is a strict admissible superset of args1.
         Intended for internal use in is_preferred!
 
-        :param s: first set
-        :type s: iterable
-        :param t: second set
-        :type t: iterable
-        :param possible_args: candidates to be added to t
+        :param args1: first set
+        :type args1: iterable
+        :param args2: second set
+        :type args2: iterable
+        :param possible_args: candidates to be added to args2
         :type possible_args: iterable
         :param k: length of possible_args
         :type k: int
         :return: True if the first set is dominated by the second set in self, False otherwise
         """
         if k == 0:
-            if s == t:
+            if args1 == args2:
                 return False
-            return self.is_admissible(t)
+            return self.is_admissible(args2)
         k -= 1
         possible_arg = possible_args[k]
-        if self.is_dominated(s, t, possible_args, k):
+        if self.is_dominated(args1, args2, possible_args, k):
             return True
-        t.add(possible_arg)
-        if self.is_dominated(s, t, possible_args, k):
+        args2.add(possible_arg)
+        if self.is_dominated(args1, args2, possible_args, k):
             return True
-        t.remove(possible_arg)
+        args2.remove(possible_arg)
         return False
 
     def verification(self, args, semantics):
@@ -458,4 +400,3 @@ class AF(object):
                     return False
             return True
         return self.skeptically_satisfied(condition)
-
