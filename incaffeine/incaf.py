@@ -135,31 +135,55 @@ class IncAF(AF):
         return self.necessarily_satisfied(condition)
 
     def is_possibly_acceptable(self, args, arg):
+        if self.A[arg] == IncAF.NO_ARGUMENT:
+            # Excluded arguments cannot be possibly acceptable
+            return False
+
         def condition(af):
             return af.is_defended_by(arg, args)
         return self.possibly_satisfied(condition)
 
     def is_necessarily_acceptable(self, args, arg):
+        if self.A[arg] != IncAF.DEFINITE_ARGUMENT:
+            # Only definite arguments can be necessarily acceptable
+            return False
+
         def condition(af):
             return af.is_defended_by(arg, args)
         return self.necessarily_satisfied(condition)
 
     def is_possibly_credulously_acceptable(self, arg, semantics):
+        if self.A[arg] == IncAF.NO_ARGUMENT:
+            # Excluded arguments cannot be possibly acceptable
+            return False
+
         def condition(af):
             return af.is_credulously_acceptable(arg, semantics)
         return self.possibly_satisfied(condition)
 
     def is_necessarily_credulously_acceptable(self, arg, semantics):
+        if self.A[arg] != IncAF.DEFINITE_ARGUMENT:
+            # Only definite arguments can be necessarily acceptable
+            return False
+
         def condition(af):
             return af.is_credulously_acceptable(arg, semantics)
         return self.necessarily_satisfied(condition)
 
     def is_possibly_skeptically_acceptable(self, arg, semantics):
+        if self.A[arg] == IncAF.NO_ARGUMENT:
+            # Excluded arguments cannot be possibly acceptable
+            return False
+
         def condition(af):
             return af.is_skeptically_acceptable(arg, semantics)
         return self.possibly_satisfied(condition)
 
     def is_necessarily_skeptically_acceptable(self, arg, semantics):
+        if self.A[arg] != IncAF.DEFINITE_ARGUMENT:
+            # Only definite arguments can be necessarily acceptable
+            return False
+
         def condition(af):
             return af.is_skeptically_acceptable(arg, semantics)
         return self.necessarily_satisfied(condition)
