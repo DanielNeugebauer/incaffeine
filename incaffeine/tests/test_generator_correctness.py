@@ -21,11 +21,12 @@ def check_instance(runner, af, args, arg):
             result = False
             runner.log_af(other_instance['af'])
             if runner.use_extension:
-                runner.log_extension(other_instance['extension'])
+                runner.log_extension(other_instance['args'])
             if runner.use_argument:
                 runner.log_argument(other_instance['arg'])
             break
     previous_instances.append(new_instance)
+
     return result
 
 
@@ -38,7 +39,7 @@ class TestGeneratorCorrectness(unittest.TestCase):
     def test_1_2_F_F_F_F(self):
         global previous_instances
         previous_instances = []
-        runner = TestRunner(check_instance, reference_check_instance)
+        runner = TestRunner('test_1_2_F_F_F_F', check_instance, reference_check_instance)
 
         # Config
         runner.use_extension = False
@@ -46,7 +47,7 @@ class TestGeneratorCorrectness(unittest.TestCase):
         runner.use_uncertain_args = False
         runner.use_uncertain_attacks = False
 
-        runner.logger_results = sys.stdout
+        runner.log_results_to_stream = True
         runner.exit_on_failure = True
 
         runner.n_min = 1
@@ -55,12 +56,12 @@ class TestGeneratorCorrectness(unittest.TestCase):
         # Run!
         runner.run()
 
-        self.assertEqual(runner.total_count, runner.success_count)
+        self.assertEqual(runner.current_count, runner.success_count)
 
     def test_1_2_T_F_F_F(self):
         global previous_instances
         previous_instances = []
-        runner = TestRunner(check_instance, reference_check_instance)
+        runner = TestRunner('test_1_2_T_F_F_F', check_instance, reference_check_instance)
 
         # Config
         runner.use_extension = True
@@ -68,7 +69,7 @@ class TestGeneratorCorrectness(unittest.TestCase):
         runner.use_uncertain_args = False
         runner.use_uncertain_attacks = False
 
-        runner.logger_results = sys.stdout
+        runner.log_results_to_stream = True
         runner.exit_on_failure = True
 
         runner.n_min = 1
@@ -77,12 +78,12 @@ class TestGeneratorCorrectness(unittest.TestCase):
         # Run!
         runner.run()
 
-        self.assertEqual(runner.total_count, runner.success_count)
+        self.assertEqual(runner.current_count, runner.success_count)
 
     def test_1_2_F_T_F_F(self):
         global previous_instances
         previous_instances = []
-        runner = TestRunner(check_instance, reference_check_instance)
+        runner = TestRunner('test_1_2_F_T_F_F', check_instance, reference_check_instance)
 
         # Config
         runner.use_extension = False
@@ -90,7 +91,7 @@ class TestGeneratorCorrectness(unittest.TestCase):
         runner.use_uncertain_args = False
         runner.use_uncertain_attacks = False
 
-        runner.logger_results = sys.stdout
+        runner.log_results_to_stream = True
         runner.exit_on_failure = True
 
         runner.n_min = 1
@@ -99,12 +100,12 @@ class TestGeneratorCorrectness(unittest.TestCase):
         # Run!
         runner.run()
 
-        self.assertEqual(runner.total_count, runner.success_count)
+        self.assertEqual(runner.current_count, runner.success_count)
 
     def test_1_2_F_F_T_F(self):
         global previous_instances
         previous_instances = []
-        runner = TestRunner(check_instance, reference_check_instance)
+        runner = TestRunner('test_1_2_F_F_T_F', check_instance, reference_check_instance)
 
         # Config
         runner.use_extension = False
@@ -112,7 +113,7 @@ class TestGeneratorCorrectness(unittest.TestCase):
         runner.use_uncertain_args = True
         runner.use_uncertain_attacks = False
 
-        runner.logger_results = sys.stdout
+        runner.log_results_to_stream = True
         runner.exit_on_failure = True
 
         runner.n_min = 1
@@ -121,12 +122,12 @@ class TestGeneratorCorrectness(unittest.TestCase):
         # Run!
         runner.run()
 
-        self.assertEqual(runner.total_count, runner.success_count)
+        self.assertEqual(runner.current_count, runner.success_count)
 
     def test_1_2_F_F_F_T(self):
         global previous_instances
         previous_instances = []
-        runner = TestRunner(check_instance, reference_check_instance)
+        runner = TestRunner('test_1_2_F_F_F_T', check_instance, reference_check_instance)
 
         # Config
         runner.use_extension = False
@@ -134,7 +135,7 @@ class TestGeneratorCorrectness(unittest.TestCase):
         runner.use_uncertain_args = False
         runner.use_uncertain_attacks = True
 
-        runner.logger_results = sys.stdout
+        runner.log_results_to_stream = True
         runner.exit_on_failure = True
 
         runner.n_min = 1
@@ -143,12 +144,12 @@ class TestGeneratorCorrectness(unittest.TestCase):
         # Run!
         runner.run()
 
-        self.assertEqual(runner.total_count, runner.success_count)
+        self.assertEqual(runner.current_count, runner.success_count)
 
     def test_1_2_T_T_F_F(self):
         global previous_instances
         previous_instances = []
-        runner = TestRunner(check_instance, reference_check_instance)
+        runner = TestRunner('test_1_2_T_T_F_F', check_instance, reference_check_instance)
 
         # Config
         runner.use_extension = True
@@ -156,7 +157,7 @@ class TestGeneratorCorrectness(unittest.TestCase):
         runner.use_uncertain_args = False
         runner.use_uncertain_attacks = False
 
-        runner.logger_results = sys.stdout
+        runner.log_results_to_stream = True
         runner.exit_on_failure = True
 
         runner.n_min = 1
@@ -165,12 +166,12 @@ class TestGeneratorCorrectness(unittest.TestCase):
         # Run!
         runner.run()
 
-        self.assertEqual(runner.total_count, runner.success_count)
+        self.assertEqual(runner.current_count, runner.success_count)
 
     def test_1_2_T_F_T_F(self):
         global previous_instances
         previous_instances = []
-        runner = TestRunner(check_instance, reference_check_instance)
+        runner = TestRunner('test_1_2_T_F_T_F', check_instance, reference_check_instance)
 
         # Config
         runner.use_extension = True
@@ -178,7 +179,7 @@ class TestGeneratorCorrectness(unittest.TestCase):
         runner.use_uncertain_args = True
         runner.use_uncertain_attacks = False
 
-        runner.logger_results = sys.stdout
+        runner.log_results_to_stream = True
         runner.exit_on_failure = True
 
         runner.n_min = 1
@@ -187,12 +188,12 @@ class TestGeneratorCorrectness(unittest.TestCase):
         # Run!
         runner.run()
 
-        self.assertEqual(runner.total_count, runner.success_count)
+        self.assertEqual(runner.current_count, runner.success_count)
 
     def test_1_2_T_F_F_T(self):
         global previous_instances
         previous_instances = []
-        runner = TestRunner(check_instance, reference_check_instance)
+        runner = TestRunner('test_1_2_T_F_F_T', check_instance, reference_check_instance)
 
         # Config
         runner.use_extension = True
@@ -200,7 +201,7 @@ class TestGeneratorCorrectness(unittest.TestCase):
         runner.use_uncertain_args = False
         runner.use_uncertain_attacks = True
 
-        runner.logger_results = sys.stdout
+        runner.log_results_to_stream = True
         runner.exit_on_failure = True
 
         runner.n_min = 1
@@ -209,12 +210,12 @@ class TestGeneratorCorrectness(unittest.TestCase):
         # Run!
         runner.run()
 
-        self.assertEqual(runner.total_count, runner.success_count)
+        self.assertEqual(runner.current_count, runner.success_count)
 
     def test_1_2_F_T_T_F(self):
         global previous_instances
         previous_instances = []
-        runner = TestRunner(check_instance, reference_check_instance)
+        runner = TestRunner('test_1_2_F_T_T_F', check_instance, reference_check_instance)
 
         # Config
         runner.use_extension = False
@@ -222,7 +223,7 @@ class TestGeneratorCorrectness(unittest.TestCase):
         runner.use_uncertain_args = True
         runner.use_uncertain_attacks = False
 
-        runner.logger_results = sys.stdout
+        runner.log_results_to_stream = True
         runner.exit_on_failure = True
 
         runner.n_min = 1
@@ -231,12 +232,12 @@ class TestGeneratorCorrectness(unittest.TestCase):
         # Run!
         runner.run()
 
-        self.assertEqual(runner.total_count, runner.success_count)
+        self.assertEqual(runner.current_count, runner.success_count)
 
     def test_1_2_F_T_F_T(self):
         global previous_instances
         previous_instances = []
-        runner = TestRunner(check_instance, reference_check_instance)
+        runner = TestRunner('test_1_2_F_T_F_T', check_instance, reference_check_instance)
 
         # Config
         runner.use_extension = False
@@ -244,7 +245,7 @@ class TestGeneratorCorrectness(unittest.TestCase):
         runner.use_uncertain_args = False
         runner.use_uncertain_attacks = True
 
-        runner.logger_results = sys.stdout
+        runner.log_results_to_stream = True
         runner.exit_on_failure = True
 
         runner.n_min = 1
@@ -253,12 +254,12 @@ class TestGeneratorCorrectness(unittest.TestCase):
         # Run!
         runner.run()
 
-        self.assertEqual(runner.total_count, runner.success_count)
+        self.assertEqual(runner.current_count, runner.success_count)
 
     def test_1_2_F_F_T_T(self):
         global previous_instances
         previous_instances = []
-        runner = TestRunner(check_instance, reference_check_instance)
+        runner = TestRunner('test_1_2_F_F_T_T', check_instance, reference_check_instance)
 
         # Config
         runner.use_extension = False
@@ -266,7 +267,7 @@ class TestGeneratorCorrectness(unittest.TestCase):
         runner.use_uncertain_args = True
         runner.use_uncertain_attacks = True
 
-        runner.logger_results = sys.stdout
+        runner.log_results_to_stream = True
         runner.exit_on_failure = True
 
         runner.n_min = 1
@@ -275,12 +276,12 @@ class TestGeneratorCorrectness(unittest.TestCase):
         # Run!
         runner.run()
 
-        self.assertEqual(runner.total_count, runner.success_count)
+        self.assertEqual(runner.current_count, runner.success_count)
 
     def test_1_2_T_T_T_F(self):
         global previous_instances
         previous_instances = []
-        runner = TestRunner(check_instance, reference_check_instance)
+        runner = TestRunner('test_1_2_T_T_T_F', check_instance, reference_check_instance)
 
         # Config
         runner.use_extension = True
@@ -288,7 +289,7 @@ class TestGeneratorCorrectness(unittest.TestCase):
         runner.use_uncertain_args = True
         runner.use_uncertain_attacks = False
 
-        runner.logger_results = sys.stdout
+        runner.log_results_to_stream = True
         runner.exit_on_failure = True
 
         runner.n_min = 1
@@ -297,12 +298,12 @@ class TestGeneratorCorrectness(unittest.TestCase):
         # Run!
         runner.run()
 
-        self.assertEqual(runner.total_count, runner.success_count)
+        self.assertEqual(runner.current_count, runner.success_count)
 
     def test_1_2_T_T_F_T(self):
         global previous_instances
         previous_instances = []
-        runner = TestRunner(check_instance, reference_check_instance)
+        runner = TestRunner('test_1_2_T_T_F_T', check_instance, reference_check_instance)
 
         # Config
         runner.use_extension = True
@@ -310,7 +311,7 @@ class TestGeneratorCorrectness(unittest.TestCase):
         runner.use_uncertain_args = False
         runner.use_uncertain_attacks = True
 
-        runner.logger_results = sys.stdout
+        runner.log_results_to_stream = True
         runner.exit_on_failure = True
 
         runner.n_min = 1
@@ -319,12 +320,12 @@ class TestGeneratorCorrectness(unittest.TestCase):
         # Run!
         runner.run()
 
-        self.assertEqual(runner.total_count, runner.success_count)
+        self.assertEqual(runner.current_count, runner.success_count)
 
     def test_1_2_T_F_T_T(self):
         global previous_instances
         previous_instances = []
-        runner = TestRunner(check_instance, reference_check_instance)
+        runner = TestRunner('test_1_2_T_F_T_T', check_instance, reference_check_instance)
 
         # Config
         runner.use_extension = True
@@ -332,7 +333,7 @@ class TestGeneratorCorrectness(unittest.TestCase):
         runner.use_uncertain_args = True
         runner.use_uncertain_attacks = True
 
-        runner.logger_results = sys.stdout
+        runner.log_results_to_stream = True
         runner.exit_on_failure = True
 
         runner.n_min = 1
@@ -341,12 +342,12 @@ class TestGeneratorCorrectness(unittest.TestCase):
         # Run!
         runner.run()
 
-        self.assertEqual(runner.total_count, runner.success_count)
+        self.assertEqual(runner.current_count, runner.success_count)
 
     def test_1_2_F_T_T_T(self):
         global previous_instances
         previous_instances = []
-        runner = TestRunner(check_instance, reference_check_instance)
+        runner = TestRunner('test_1_2_F_T_T_T', check_instance, reference_check_instance)
 
         # Config
         runner.use_extension = False
@@ -354,7 +355,7 @@ class TestGeneratorCorrectness(unittest.TestCase):
         runner.use_uncertain_args = True
         runner.use_uncertain_attacks = True
 
-        runner.logger_results = sys.stdout
+        runner.log_results_to_stream = True
         runner.exit_on_failure = True
 
         runner.n_min = 1
@@ -363,12 +364,12 @@ class TestGeneratorCorrectness(unittest.TestCase):
         # Run!
         runner.run()
 
-        self.assertEqual(runner.total_count, runner.success_count)
+        self.assertEqual(runner.current_count, runner.success_count)
 
     def test_1_2_T_T_T_T(self):
         global previous_instances
         previous_instances = []
-        runner = TestRunner(check_instance, reference_check_instance)
+        runner = TestRunner('test_1_2_T_T_T_T', check_instance, reference_check_instance)
 
         # Config
         runner.use_extension = True
@@ -376,7 +377,7 @@ class TestGeneratorCorrectness(unittest.TestCase):
         runner.use_uncertain_args = True
         runner.use_uncertain_attacks = True
 
-        runner.logger_results = sys.stdout
+        runner.log_results_to_stream = True
         runner.exit_on_failure = True
 
         runner.n_min = 1
@@ -385,7 +386,7 @@ class TestGeneratorCorrectness(unittest.TestCase):
         # Run!
         runner.run()
 
-        self.assertEqual(runner.total_count, runner.success_count)
+        self.assertEqual(runner.current_count, runner.success_count)
 
 
 if __name__ == "__main__":

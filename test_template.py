@@ -6,9 +6,6 @@ from incaffeine.runner import TestRunner
 Script template - extend this to implement a custom instance checker.
 """
 
-print('Script start... ------------------------------------')
-print('Testing dummy...')
-
 
 def check_instance(runner, af, args, arg):
     # TODO implement instance test here!
@@ -21,7 +18,7 @@ def reference_check_instance(runner, af, args, arg):
 
 
 def main(argv):
-    runner = TestRunner(check_instance, reference_check_instance)
+    runner = TestRunner('demo', check_instance, reference_check_instance)
 
     # Config
     runner.apply_params(argv)
@@ -39,5 +36,3 @@ def main(argv):
 
 if __name__ == "__main__":
     main(sys.argv[1:])
-
-print("...finished ----------------------------------------")
