@@ -28,7 +28,7 @@ def main(argv):
     runner.use_uncertain_attacks = True
 
     runner.log_on_success = False
-    runner.logger_results = sys.stdout
+    runner.log_results_to_stream = True
 
     # Run!
     runner.run()
