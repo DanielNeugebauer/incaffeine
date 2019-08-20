@@ -447,3 +447,26 @@ class AF(object):
             if self.verification(args, semantics):
                 return False
         return True
+
+    def is_skeptically_acceptable_and_extension_exists(self, arg, semantics):
+        """
+        Solves the Existence-and-Skeptical-Acceptance problem for this AF, the given argument, and the given semantics.
+
+        :param arg: An argument in this AF.
+        :param semantics: one of the semantics defined in the AF class.
+        :return: False if this AF has no extension for the semantics or if at least one set of arguments satisfying
+          the semantics does not contain arg, True otherwise
+        """
+        # check all arg sets EXCLUDING arg: if one of them is an extension, return False
+        # Also check all arg sets INCLUDING arg: if none of them is an extension, return False
+        arg_range = [i for i in range(self.n)]
+        arg_range.remove(arg)
+        extension_found = False
+        for base_tuple in powerset(arg_range):
+            args = set(base_tuple)
+            if self.verification(args, semantics):
+                return False
+            args.add(arg)
+            if self.verification(args, semantics):
+                extension_found = True
+        return extension_found

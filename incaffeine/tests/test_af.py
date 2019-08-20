@@ -739,6 +739,103 @@ class TestAF(unittest.TestCase):
         self.assertFalse(af.is_skeptically_acceptable(1, AF.SEMANTICS_ST))
         self.assertTrue(af.is_skeptically_acceptable(2, AF.SEMANTICS_ST))
 
+    def test_skeptical_acceptable_and_extension_exists_1(self):
+        af = AF(3)
+        af.set_argument(0, AF.DEFINITE_ARGUMENT)
+        af.set_argument(1, AF.DEFINITE_ARGUMENT)
+        af.set_argument(2, AF.DEFINITE_ARGUMENT)
+        af.set_attack(0, 1, AF.DEFINITE_ATTACK)
+        af.set_attack(2, 2, AF.DEFINITE_ATTACK)
+
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(0, AF.SEMANTICS_CF))
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(1, AF.SEMANTICS_CF))
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(2, AF.SEMANTICS_CF))
+
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(0, AF.SEMANTICS_AD))
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(1, AF.SEMANTICS_AD))
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(2, AF.SEMANTICS_AD))
+
+        self.assertTrue(af.is_skeptically_acceptable_and_extension_exists(0, AF.SEMANTICS_CP))
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(1, AF.SEMANTICS_CP))
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(2, AF.SEMANTICS_CP))
+
+        self.assertTrue(af.is_skeptically_acceptable_and_extension_exists(0, AF.SEMANTICS_GR))
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(1, AF.SEMANTICS_GR))
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(2, AF.SEMANTICS_GR))
+
+        self.assertTrue(af.is_skeptically_acceptable_and_extension_exists(0, AF.SEMANTICS_PR))
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(1, AF.SEMANTICS_PR))
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(2, AF.SEMANTICS_PR))
+
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(0, AF.SEMANTICS_ST))
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(1, AF.SEMANTICS_ST))
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(2, AF.SEMANTICS_ST))
+
+    def test_skeptical_acceptable_and_extension_exists_2(self):
+        af = AF(3)
+        af.set_argument(0, AF.DEFINITE_ARGUMENT)
+        af.set_argument(1, AF.DEFINITE_ARGUMENT)
+        af.set_argument(2, AF.DEFINITE_ARGUMENT)
+        af.set_attack(0, 1, AF.DEFINITE_ATTACK)
+        af.set_attack(1, 2, AF.DEFINITE_ATTACK)
+        af.set_attack(2, 0, AF.DEFINITE_ATTACK)
+
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(0, AF.SEMANTICS_CF))
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(1, AF.SEMANTICS_CF))
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(2, AF.SEMANTICS_CF))
+
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(0, AF.SEMANTICS_AD))
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(1, AF.SEMANTICS_AD))
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(2, AF.SEMANTICS_AD))
+
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(0, AF.SEMANTICS_CP))
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(1, AF.SEMANTICS_CP))
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(2, AF.SEMANTICS_CP))
+
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(0, AF.SEMANTICS_GR))
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(1, AF.SEMANTICS_GR))
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(2, AF.SEMANTICS_GR))
+
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(0, AF.SEMANTICS_PR))
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(1, AF.SEMANTICS_PR))
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(2, AF.SEMANTICS_PR))
+
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(0, AF.SEMANTICS_ST))
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(1, AF.SEMANTICS_ST))
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(2, AF.SEMANTICS_ST))
+
+    def test_skeptical_acceptable_and_extension_exists_3(self):
+        af = AF(3)
+        af.set_argument(0, AF.DEFINITE_ARGUMENT)
+        af.set_argument(1, AF.DEFINITE_ARGUMENT)
+        af.set_argument(2, AF.DEFINITE_ARGUMENT)
+        af.set_attack(0, 1, AF.DEFINITE_ATTACK)
+        af.set_attack(1, 2, AF.DEFINITE_ATTACK)
+
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(0, AF.SEMANTICS_CF))
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(1, AF.SEMANTICS_CF))
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(2, AF.SEMANTICS_CF))
+
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(0, AF.SEMANTICS_AD))
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(1, AF.SEMANTICS_AD))
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(2, AF.SEMANTICS_AD))
+
+        self.assertTrue(af.is_skeptically_acceptable_and_extension_exists(0, AF.SEMANTICS_CP))
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(1, AF.SEMANTICS_CP))
+        self.assertTrue(af.is_skeptically_acceptable_and_extension_exists(2, AF.SEMANTICS_CP))
+
+        self.assertTrue(af.is_skeptically_acceptable_and_extension_exists(0, AF.SEMANTICS_GR))
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(1, AF.SEMANTICS_GR))
+        self.assertTrue(af.is_skeptically_acceptable_and_extension_exists(2, AF.SEMANTICS_GR))
+
+        self.assertTrue(af.is_skeptically_acceptable_and_extension_exists(0, AF.SEMANTICS_PR))
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(1, AF.SEMANTICS_PR))
+        self.assertTrue(af.is_skeptically_acceptable_and_extension_exists(2, AF.SEMANTICS_PR))
+
+        self.assertTrue(af.is_skeptically_acceptable_and_extension_exists(0, AF.SEMANTICS_ST))
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(1, AF.SEMANTICS_ST))
+        self.assertTrue(af.is_skeptically_acceptable_and_extension_exists(2, AF.SEMANTICS_ST))
+
 
 if __name__ == "__main__":
     unittest.main()
