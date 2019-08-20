@@ -150,6 +150,41 @@ class TestAF(unittest.TestCase):
         self.assertFalse(af.verification({1, 2}, AF.SEMANTICS_CF))
         self.assertFalse(af.verification({0, 1, 2}, AF.SEMANTICS_CF))
 
+    def test_non_empty_conflict_free1(self):
+        af = AF(3)
+        af.set_argument(0, AF.DEFINITE_ARGUMENT)
+        af.set_argument(1, AF.DEFINITE_ARGUMENT)
+        af.set_argument(2, AF.DEFINITE_ARGUMENT)
+        af.set_attack(0, 1, AF.DEFINITE_ATTACK)
+        af.set_attack(2, 2, AF.DEFINITE_ATTACK)
+
+        self.assertFalse(af.verification({}, AF.SEMANTICS_NECF))
+        self.assertTrue(af.verification({0}, AF.SEMANTICS_NECF))
+        self.assertTrue(af.verification({1}, AF.SEMANTICS_NECF))
+        self.assertFalse(af.verification({0, 1}, AF.SEMANTICS_NECF))
+        self.assertFalse(af.verification({2}, AF.SEMANTICS_NECF))
+        self.assertFalse(af.verification({0, 2}, AF.SEMANTICS_NECF))
+        self.assertFalse(af.verification({1, 2}, AF.SEMANTICS_NECF))
+        self.assertFalse(af.verification({0, 1, 2}, AF.SEMANTICS_NECF))
+
+    def test_non_empty_conflict_free2(self):
+        af = AF(3)
+        af.set_argument(0, AF.DEFINITE_ARGUMENT)
+        af.set_argument(1, AF.DEFINITE_ARGUMENT)
+        af.set_argument(2, AF.DEFINITE_ARGUMENT)
+        af.set_attack(0, 1, AF.DEFINITE_ATTACK)
+        af.set_attack(1, 2, AF.DEFINITE_ATTACK)
+        af.set_attack(2, 0, AF.DEFINITE_ATTACK)
+
+        self.assertFalse(af.verification({}, AF.SEMANTICS_NECF))
+        self.assertTrue(af.verification({0}, AF.SEMANTICS_NECF))
+        self.assertTrue(af.verification({1}, AF.SEMANTICS_NECF))
+        self.assertFalse(af.verification({0, 1}, AF.SEMANTICS_NECF))
+        self.assertTrue(af.verification({2}, AF.SEMANTICS_NECF))
+        self.assertFalse(af.verification({0, 2}, AF.SEMANTICS_NECF))
+        self.assertFalse(af.verification({1, 2}, AF.SEMANTICS_NECF))
+        self.assertFalse(af.verification({0, 1, 2}, AF.SEMANTICS_NECF))
+
     def test_admissible1(self):
         af = AF(3)
         af.set_argument(0, AF.DEFINITE_ARGUMENT)
@@ -228,6 +263,58 @@ class TestAF(unittest.TestCase):
         self.assertTrue(af.verification({0, 2}, AF.SEMANTICS_AD))
         self.assertFalse(af.verification({1, 2}, AF.SEMANTICS_AD))
         self.assertFalse(af.verification({0, 1, 2}, AF.SEMANTICS_AD))
+
+    def test_non_empty_admissible1(self):
+        af = AF(3)
+        af.set_argument(0, AF.DEFINITE_ARGUMENT)
+        af.set_argument(1, AF.DEFINITE_ARGUMENT)
+        af.set_argument(2, AF.DEFINITE_ARGUMENT)
+        af.set_attack(0, 1, AF.DEFINITE_ATTACK)
+        af.set_attack(2, 2, AF.DEFINITE_ATTACK)
+
+        self.assertFalse(af.verification({}, AF.SEMANTICS_NEAD))
+        self.assertTrue(af.verification({0}, AF.SEMANTICS_NEAD))
+        self.assertFalse(af.verification({1}, AF.SEMANTICS_NEAD))
+        self.assertFalse(af.verification({0, 1}, AF.SEMANTICS_NEAD))
+        self.assertFalse(af.verification({2}, AF.SEMANTICS_NEAD))
+        self.assertFalse(af.verification({0, 2}, AF.SEMANTICS_NEAD))
+        self.assertFalse(af.verification({1, 2}, AF.SEMANTICS_NEAD))
+        self.assertFalse(af.verification({0, 1, 2}, AF.SEMANTICS_NEAD))
+
+    def test_non_empty_admissible2(self):
+        af = AF(3)
+        af.set_argument(0, AF.DEFINITE_ARGUMENT)
+        af.set_argument(1, AF.DEFINITE_ARGUMENT)
+        af.set_argument(2, AF.DEFINITE_ARGUMENT)
+        af.set_attack(0, 1, AF.DEFINITE_ATTACK)
+        af.set_attack(1, 2, AF.DEFINITE_ATTACK)
+        af.set_attack(2, 0, AF.DEFINITE_ATTACK)
+
+        self.assertFalse(af.verification({}, AF.SEMANTICS_NEAD))
+        self.assertFalse(af.verification({0}, AF.SEMANTICS_NEAD))
+        self.assertFalse(af.verification({1}, AF.SEMANTICS_NEAD))
+        self.assertFalse(af.verification({0, 1}, AF.SEMANTICS_NEAD))
+        self.assertFalse(af.verification({2}, AF.SEMANTICS_NEAD))
+        self.assertFalse(af.verification({0, 2}, AF.SEMANTICS_NEAD))
+        self.assertFalse(af.verification({1, 2}, AF.SEMANTICS_NEAD))
+        self.assertFalse(af.verification({0, 1, 2}, AF.SEMANTICS_NEAD))
+
+    def test_non_empty_admissible3(self):
+        af = AF(3)
+        af.set_argument(0, AF.DEFINITE_ARGUMENT)
+        af.set_argument(1, AF.DEFINITE_ARGUMENT)
+        af.set_argument(2, AF.DEFINITE_ARGUMENT)
+        af.set_attack(0, 1, AF.DEFINITE_ATTACK)
+        af.set_attack(1, 2, AF.DEFINITE_ATTACK)
+
+        self.assertFalse(af.verification({}, AF.SEMANTICS_NEAD))
+        self.assertTrue(af.verification({0}, AF.SEMANTICS_NEAD))
+        self.assertFalse(af.verification({1}, AF.SEMANTICS_NEAD))
+        self.assertFalse(af.verification({0, 1}, AF.SEMANTICS_NEAD))
+        self.assertFalse(af.verification({2}, AF.SEMANTICS_NEAD))
+        self.assertTrue(af.verification({0, 2}, AF.SEMANTICS_NEAD))
+        self.assertFalse(af.verification({1, 2}, AF.SEMANTICS_NEAD))
+        self.assertFalse(af.verification({0, 1, 2}, AF.SEMANTICS_NEAD))
 
     def test_complete1(self):
         af = AF(3)
@@ -557,9 +644,17 @@ class TestAF(unittest.TestCase):
         self.assertTrue(af.is_credulously_acceptable(1, AF.SEMANTICS_CF))
         self.assertFalse(af.is_credulously_acceptable(2, AF.SEMANTICS_CF))
 
+        self.assertTrue(af.is_credulously_acceptable(0, AF.SEMANTICS_NECF))
+        self.assertTrue(af.is_credulously_acceptable(1, AF.SEMANTICS_NECF))
+        self.assertFalse(af.is_credulously_acceptable(2, AF.SEMANTICS_NECF))
+
         self.assertTrue(af.is_credulously_acceptable(0, AF.SEMANTICS_AD))
         self.assertFalse(af.is_credulously_acceptable(1, AF.SEMANTICS_AD))
         self.assertFalse(af.is_credulously_acceptable(2, AF.SEMANTICS_AD))
+
+        self.assertTrue(af.is_credulously_acceptable(0, AF.SEMANTICS_NEAD))
+        self.assertFalse(af.is_credulously_acceptable(1, AF.SEMANTICS_NEAD))
+        self.assertFalse(af.is_credulously_acceptable(2, AF.SEMANTICS_NEAD))
 
         self.assertTrue(af.is_credulously_acceptable(0, AF.SEMANTICS_CP))
         self.assertFalse(af.is_credulously_acceptable(1, AF.SEMANTICS_CP))
@@ -590,9 +685,17 @@ class TestAF(unittest.TestCase):
         self.assertTrue(af.is_credulously_acceptable(1, AF.SEMANTICS_CF))
         self.assertTrue(af.is_credulously_acceptable(2, AF.SEMANTICS_CF))
 
+        self.assertTrue(af.is_credulously_acceptable(0, AF.SEMANTICS_NECF))
+        self.assertTrue(af.is_credulously_acceptable(1, AF.SEMANTICS_NECF))
+        self.assertTrue(af.is_credulously_acceptable(2, AF.SEMANTICS_NECF))
+
         self.assertFalse(af.is_credulously_acceptable(0, AF.SEMANTICS_AD))
         self.assertFalse(af.is_credulously_acceptable(1, AF.SEMANTICS_AD))
         self.assertFalse(af.is_credulously_acceptable(2, AF.SEMANTICS_AD))
+
+        self.assertFalse(af.is_credulously_acceptable(0, AF.SEMANTICS_NEAD))
+        self.assertFalse(af.is_credulously_acceptable(1, AF.SEMANTICS_NEAD))
+        self.assertFalse(af.is_credulously_acceptable(2, AF.SEMANTICS_NEAD))
 
         self.assertFalse(af.is_credulously_acceptable(0, AF.SEMANTICS_CP))
         self.assertFalse(af.is_credulously_acceptable(1, AF.SEMANTICS_CP))
@@ -622,9 +725,17 @@ class TestAF(unittest.TestCase):
         self.assertTrue(af.is_credulously_acceptable(1, AF.SEMANTICS_CF))
         self.assertTrue(af.is_credulously_acceptable(2, AF.SEMANTICS_CF))
 
+        self.assertTrue(af.is_credulously_acceptable(0, AF.SEMANTICS_NECF))
+        self.assertTrue(af.is_credulously_acceptable(1, AF.SEMANTICS_NECF))
+        self.assertTrue(af.is_credulously_acceptable(2, AF.SEMANTICS_NECF))
+
         self.assertTrue(af.is_credulously_acceptable(0, AF.SEMANTICS_AD))
         self.assertFalse(af.is_credulously_acceptable(1, AF.SEMANTICS_AD))
         self.assertTrue(af.is_credulously_acceptable(2, AF.SEMANTICS_AD))
+
+        self.assertTrue(af.is_credulously_acceptable(0, AF.SEMANTICS_NEAD))
+        self.assertFalse(af.is_credulously_acceptable(1, AF.SEMANTICS_NEAD))
+        self.assertTrue(af.is_credulously_acceptable(2, AF.SEMANTICS_NEAD))
 
         self.assertTrue(af.is_credulously_acceptable(0, AF.SEMANTICS_CP))
         self.assertFalse(af.is_credulously_acceptable(1, AF.SEMANTICS_CP))
@@ -654,9 +765,17 @@ class TestAF(unittest.TestCase):
         self.assertFalse(af.is_skeptically_acceptable(1, AF.SEMANTICS_CF))
         self.assertFalse(af.is_skeptically_acceptable(2, AF.SEMANTICS_CF))
 
+        self.assertFalse(af.is_skeptically_acceptable(0, AF.SEMANTICS_NECF))
+        self.assertFalse(af.is_skeptically_acceptable(1, AF.SEMANTICS_NECF))
+        self.assertFalse(af.is_skeptically_acceptable(2, AF.SEMANTICS_NECF))
+
         self.assertFalse(af.is_skeptically_acceptable(0, AF.SEMANTICS_AD))
         self.assertFalse(af.is_skeptically_acceptable(1, AF.SEMANTICS_AD))
         self.assertFalse(af.is_skeptically_acceptable(2, AF.SEMANTICS_AD))
+
+        self.assertTrue(af.is_skeptically_acceptable(0, AF.SEMANTICS_NEAD))
+        self.assertFalse(af.is_skeptically_acceptable(1, AF.SEMANTICS_NEAD))
+        self.assertFalse(af.is_skeptically_acceptable(2, AF.SEMANTICS_NEAD))
 
         self.assertTrue(af.is_skeptically_acceptable(0, AF.SEMANTICS_CP))
         self.assertFalse(af.is_skeptically_acceptable(1, AF.SEMANTICS_CP))
@@ -687,9 +806,17 @@ class TestAF(unittest.TestCase):
         self.assertFalse(af.is_skeptically_acceptable(1, AF.SEMANTICS_CF))
         self.assertFalse(af.is_skeptically_acceptable(2, AF.SEMANTICS_CF))
 
+        self.assertFalse(af.is_skeptically_acceptable(0, AF.SEMANTICS_NECF))
+        self.assertFalse(af.is_skeptically_acceptable(1, AF.SEMANTICS_NECF))
+        self.assertFalse(af.is_skeptically_acceptable(2, AF.SEMANTICS_NECF))
+
         self.assertFalse(af.is_skeptically_acceptable(0, AF.SEMANTICS_AD))
         self.assertFalse(af.is_skeptically_acceptable(1, AF.SEMANTICS_AD))
         self.assertFalse(af.is_skeptically_acceptable(2, AF.SEMANTICS_AD))
+
+        self.assertTrue(af.is_skeptically_acceptable(0, AF.SEMANTICS_NEAD))
+        self.assertTrue(af.is_skeptically_acceptable(1, AF.SEMANTICS_NEAD))
+        self.assertTrue(af.is_skeptically_acceptable(2, AF.SEMANTICS_NEAD))
 
         self.assertFalse(af.is_skeptically_acceptable(0, AF.SEMANTICS_CP))
         self.assertFalse(af.is_skeptically_acceptable(1, AF.SEMANTICS_CP))
@@ -719,9 +846,17 @@ class TestAF(unittest.TestCase):
         self.assertFalse(af.is_skeptically_acceptable(1, AF.SEMANTICS_CF))
         self.assertFalse(af.is_skeptically_acceptable(2, AF.SEMANTICS_CF))
 
+        self.assertFalse(af.is_skeptically_acceptable(0, AF.SEMANTICS_NECF))
+        self.assertFalse(af.is_skeptically_acceptable(1, AF.SEMANTICS_NECF))
+        self.assertFalse(af.is_skeptically_acceptable(2, AF.SEMANTICS_NECF))
+
         self.assertFalse(af.is_skeptically_acceptable(0, AF.SEMANTICS_AD))
         self.assertFalse(af.is_skeptically_acceptable(1, AF.SEMANTICS_AD))
         self.assertFalse(af.is_skeptically_acceptable(2, AF.SEMANTICS_AD))
+
+        self.assertTrue(af.is_skeptically_acceptable(0, AF.SEMANTICS_NEAD))
+        self.assertFalse(af.is_skeptically_acceptable(1, AF.SEMANTICS_NEAD))
+        self.assertFalse(af.is_skeptically_acceptable(2, AF.SEMANTICS_NEAD))
 
         self.assertTrue(af.is_skeptically_acceptable(0, AF.SEMANTICS_CP))
         self.assertFalse(af.is_skeptically_acceptable(1, AF.SEMANTICS_CP))
@@ -751,9 +886,17 @@ class TestAF(unittest.TestCase):
         self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(1, AF.SEMANTICS_CF))
         self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(2, AF.SEMANTICS_CF))
 
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(0, AF.SEMANTICS_NECF))
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(1, AF.SEMANTICS_NECF))
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(2, AF.SEMANTICS_NECF))
+
         self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(0, AF.SEMANTICS_AD))
         self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(1, AF.SEMANTICS_AD))
         self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(2, AF.SEMANTICS_AD))
+
+        self.assertTrue(af.is_skeptically_acceptable_and_extension_exists(0, AF.SEMANTICS_NEAD))
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(1, AF.SEMANTICS_NEAD))
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(2, AF.SEMANTICS_NEAD))
 
         self.assertTrue(af.is_skeptically_acceptable_and_extension_exists(0, AF.SEMANTICS_CP))
         self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(1, AF.SEMANTICS_CP))
@@ -784,9 +927,17 @@ class TestAF(unittest.TestCase):
         self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(1, AF.SEMANTICS_CF))
         self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(2, AF.SEMANTICS_CF))
 
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(0, AF.SEMANTICS_NECF))
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(1, AF.SEMANTICS_NECF))
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(2, AF.SEMANTICS_NECF))
+
         self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(0, AF.SEMANTICS_AD))
         self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(1, AF.SEMANTICS_AD))
         self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(2, AF.SEMANTICS_AD))
+
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(0, AF.SEMANTICS_NEAD))
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(1, AF.SEMANTICS_NEAD))
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(2, AF.SEMANTICS_NEAD))
 
         self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(0, AF.SEMANTICS_CP))
         self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(1, AF.SEMANTICS_CP))
@@ -816,9 +967,17 @@ class TestAF(unittest.TestCase):
         self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(1, AF.SEMANTICS_CF))
         self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(2, AF.SEMANTICS_CF))
 
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(0, AF.SEMANTICS_NECF))
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(1, AF.SEMANTICS_NECF))
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(2, AF.SEMANTICS_NECF))
+
         self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(0, AF.SEMANTICS_AD))
         self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(1, AF.SEMANTICS_AD))
         self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(2, AF.SEMANTICS_AD))
+
+        self.assertTrue(af.is_skeptically_acceptable_and_extension_exists(0, AF.SEMANTICS_NEAD))
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(1, AF.SEMANTICS_NEAD))
+        self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(2, AF.SEMANTICS_NEAD))
 
         self.assertTrue(af.is_skeptically_acceptable_and_extension_exists(0, AF.SEMANTICS_CP))
         self.assertFalse(af.is_skeptically_acceptable_and_extension_exists(1, AF.SEMANTICS_CP))

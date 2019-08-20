@@ -32,6 +32,10 @@ class AF(object):
     """stable semantics."""
     SEMANTICS_PR = 6
     """preferred semantics."""
+    SEMANTICS_NECF = 7
+    """preferred semantics."""
+    SEMANTICS_NEAD = 8
+    """preferred semantics."""
 
     def __init__(self, n):
         self.n = n
@@ -332,8 +336,12 @@ class AF(object):
         """
         if semantics == self.SEMANTICS_CF:
             return self.is_conflict_free(args)
+        elif semantics == self.SEMANTICS_NECF:
+            return len(args) > 0 and self.is_conflict_free(args)
         elif semantics == self.SEMANTICS_AD:
             return self.is_admissible(args)
+        elif semantics == self.SEMANTICS_NEAD:
+            return len(args) > 0 and self.is_admissible(args)
         elif semantics == self.SEMANTICS_CP:
             return self.is_complete(args)
         elif semantics == self.SEMANTICS_GR:
