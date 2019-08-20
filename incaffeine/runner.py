@@ -183,9 +183,9 @@ class TestRunner(object):
             self.log_extension(instance.extension)
         if self.use_argument:
             self.log_argument(instance.arg)
-        self.write_log_results('\theuristic result: ')
+        self.write_log_results('\tprimary result: ')
         self.write_log_results(str(result))
-        self.write_log_results('\n\tbrute force result: ')
+        self.write_log_results('\n\treference result: ')
         self.write_log_results(str(reference_result))
         self.write_log_results('\n')
 

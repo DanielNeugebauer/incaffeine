@@ -89,8 +89,7 @@ def unfixed_completion(af, args):  # for complete/grounded semantics
 
 def check_instance(runner, af, args, arg):
     unfixed = unfixed_completion(af, args)
-    # return unfixed.verification(args, IncAF.SEMANTICS_CP)
-    return af.necessary_verification(args, IncAF.SEMANTICS_CP)
+    return unfixed.verification(args, IncAF.SEMANTICS_CP)
 
 
 def reference_check_instance(runner, af, args, arg):
