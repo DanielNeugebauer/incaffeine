@@ -296,7 +296,7 @@ class AF(object):
         Indicates whether the first set of arguments is dominated by the second set of arguments in this AF.
 
         A set args1 is dominated by a set args2 if args2 is a strict admissible superset of args1.
-        Intended for internal use in is_preferred!
+        Intended for internal use in AF.is_preferred!
 
         :param args1: first set
         :type args1: iterable
@@ -323,6 +323,13 @@ class AF(object):
         return False
 
     def verification(self, args, semantics):
+        """
+        Solves the Verification problem for this AF, the given set of arguments, and the given semantics.
+
+        :param args: set of arguments in this AF.
+        :param semantics: one of the semantics defined in the AF class.
+        :return: True if args satisfies the semantics, False otherwise
+        """
         if semantics == self.SEMANTICS_CF:
             return self.is_conflict_free(args)
         elif semantics == self.SEMANTICS_AD:
@@ -339,6 +346,12 @@ class AF(object):
         return False
 
     def credulously_satisfied(self, condition):
+        """
+        Tests if the given condition is satisfied for at least one set of arguments in this AF.
+
+        :param condition: callback function that takes this af and a set of arguments as input
+        :return: True if the condition returns a truthy value for at least one set of arguments, False otherwise
+        """
         af = copy.deepcopy(self)
         args = set()
         n_current = 0
@@ -346,6 +359,15 @@ class AF(object):
         return af.credulously_satisfied_rec(condition, args, n_current, n_max)
 
     def credulously_satisfied_rec(self, condition, args, n_current, n_max):
+        """
+        Internal use only!
+
+        :param condition:
+        :param args:
+        :param n_current:
+        :param n_max:
+        :return:
+        """
         if n_current == n_max:
             return condition(self)
         n_current += 1
@@ -358,6 +380,12 @@ class AF(object):
         return False
 
     def skeptically_satisfied(self, condition):
+        """
+        Tests if the given condition is satisfied for all sets of arguments in this AF.
+
+        :param condition: callback function that takes this af and a set of arguments as input
+        :return: False if the condition returns a falsy value for at least one set of arguments, True otherwise
+        """
         af = copy.deepcopy(self)
         args = set()
         n_current = 0
@@ -365,8 +393,17 @@ class AF(object):
         return af.skeptically_satisfied_rec(condition, args, n_current, n_max)
 
     def skeptically_satisfied_rec(self, condition, args, n_current, n_max):
+        """
+        Internal use only!
+
+        :param condition:
+        :param args:
+        :param n_current:
+        :param n_max:
+        :return:
+        """
         if n_current == n_max:
-            return condition(self)
+            return condition(self, args)
         n_current += 1
         if not self.skeptically_satisfied_rec(condition, args, n_current, n_max):
             return False
@@ -377,26 +414,36 @@ class AF(object):
         return True
 
     def is_credulously_acceptable(self, arg, semantics):
-        def condition(af):
-            # check all arg sets INCLUDING arg: if one of them is an extension, return True
-            arg_range = [i for i in range(self.n)]
-            arg_range.remove(arg)
-            for base_tuple in powerset(arg_range):
-                superset = set(base_tuple)
-                superset.add(arg)
-                if af.verification(superset, semantics):
-                    return True
-            return False
-        return self.credulously_satisfied(condition)
+        """
+        Solves the Credulous-Acceptance problem for this AF, the given argument, and the given semantics.
+
+        :param arg: An argument in this AF.
+        :param semantics: one of the semantics defined in the AF class.
+        :return: True if at least one set of arguments that satisfies the semantics contains arg, False otherwise
+        """
+        # check all arg sets INCLUDING arg: if one of them is an extension, return True
+        arg_range = [i for i in range(self.n)]
+        arg_range.remove(arg)
+        for base_tuple in powerset(arg_range):
+            args = set(base_tuple)
+            args.add(arg)
+            if self.verification(args, semantics):
+                return True
+        return False
 
     def is_skeptically_acceptable(self, arg, semantics):
-        def condition(af):
-            # check all arg sets EXCLUDING arg: if one of them is an extension, return False
-            arg_range = [i for i in range(self.n)]
-            arg_range.remove(arg)
-            for base_tuple in powerset(arg_range):
-                superset = set(base_tuple)
-                if af.verification(superset, semantics):
-                    return False
-            return True
-        return self.skeptically_satisfied(condition)
+        """
+        Solves the Skeptical-Acceptance problem for this AF, the given argument, and the given semantics.
+
+        :param arg: An argument in this AF.
+        :param semantics: one of the semantics defined in the AF class.
+        :return: False if at least one set of arguments satisfying the semantics does not contain arg, True otherwise
+        """
+        # check all arg sets EXCLUDING arg: if one of them is an extension, return False
+        arg_range = [i for i in range(self.n)]
+        arg_range.remove(arg)
+        for base_tuple in powerset(arg_range):
+            args = set(base_tuple)
+            if self.verification(args, semantics):
+                return False
+        return True

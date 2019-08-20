@@ -179,6 +179,15 @@ class IncAF(AF):
             return af.is_skeptically_acceptable(arg, semantics)
         return self.possibly_satisfied(condition)
 
+    def is_possibly_skeptically_acceptable_and_extension_exists(self, arg, semantics):
+        if self.A[arg] == IncAF.NO_ARGUMENT:
+            # Excluded arguments cannot be possibly acceptable
+            return False
+
+        def condition(af):
+            return af.is_skeptically_acceptable_and_extension_exists(arg, semantics)
+        return self.possibly_satisfied(condition)
+
     def is_necessarily_skeptically_acceptable(self, arg, semantics):
         if self.A[arg] != IncAF.DEFINITE_ARGUMENT:
             # Only definite arguments can be necessarily acceptable
@@ -186,6 +195,15 @@ class IncAF(AF):
 
         def condition(af):
             return af.is_skeptically_acceptable(arg, semantics)
+        return self.necessarily_satisfied(condition)
+
+    def is_necessarily_skeptically_acceptable_and_extension_exists(self, arg, semantics):
+        if self.A[arg] != IncAF.DEFINITE_ARGUMENT:
+            # Only definite arguments can be necessarily acceptable
+            return False
+
+        def condition(af):
+            return af.is_skeptically_acceptable_and_extension_exists(arg, semantics)
         return self.necessarily_satisfied(condition)
 
     def possibly_satisfied(self, condition):
