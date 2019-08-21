@@ -429,9 +429,11 @@ class AF(object):
         :param semantics: one of the semantics defined in the AF class.
         :return: True if at least one set of arguments that satisfies the semantics contains arg, False otherwise
         """
+        if self.A[arg] != AF.DEFINITE_ARGUMENT:
+            return False
         # check all arg sets INCLUDING arg: if one of them is an extension, return True
-        arg_range = [i for i in range(self.n)]
-        arg_range.remove(arg)
+        arg_range = [i for i in range(self.n)
+                     if self.A[i] == AF.DEFINITE_ARGUMENT and i != arg]
         for base_tuple in powerset(arg_range):
             args = set(base_tuple)
             args.add(arg)
@@ -447,9 +449,11 @@ class AF(object):
         :param semantics: one of the semantics defined in the AF class.
         :return: False if at least one set of arguments satisfying the semantics does not contain arg, True otherwise
         """
+        if self.A[arg] != AF.DEFINITE_ARGUMENT:
+            return False
         # check all arg sets EXCLUDING arg: if one of them is an extension, return False
-        arg_range = [i for i in range(self.n)]
-        arg_range.remove(arg)
+        arg_range = [i for i in range(self.n)
+                     if self.A[i] == AF.DEFINITE_ARGUMENT and i != arg]
         for base_tuple in powerset(arg_range):
             args = set(base_tuple)
             if self.verification(args, semantics):
@@ -465,10 +469,13 @@ class AF(object):
         :return: False if this AF has no extension for the semantics or if at least one set of arguments satisfying
           the semantics does not contain arg, True otherwise
         """
+        if self.A[arg] != AF.DEFINITE_ARGUMENT:
+            return False
         # check all arg sets EXCLUDING arg: if one of them is an extension, return False
         # Also check all arg sets INCLUDING arg: if none of them is an extension, return False
-        arg_range = [i for i in range(self.n)]
-        arg_range.remove(arg)
+        # arg_range = [i for i in range(self.n)]
+        arg_range = [i for i in range(self.n)
+                     if self.A[i] == AF.DEFINITE_ARGUMENT and i != arg]
         extension_found = False
         for base_tuple in powerset(arg_range):
             args = set(base_tuple)

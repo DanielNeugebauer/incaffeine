@@ -370,9 +370,9 @@ class TestIncAF(unittest.TestCase):
         self.assertFalse(af.is_possibly_skeptically_acceptable(1, IncAF.SEMANTICS_AD))
         self.assertFalse(af.is_possibly_skeptically_acceptable(2, IncAF.SEMANTICS_AD))
 
-        self.assertFalse(af.is_possibly_skeptically_acceptable(0, IncAF.SEMANTICS_NEAD))
-        self.assertFalse(af.is_possibly_skeptically_acceptable(1, IncAF.SEMANTICS_NEAD))
-        self.assertFalse(af.is_possibly_skeptically_acceptable(2, IncAF.SEMANTICS_NEAD))
+        self.assertTrue(af.is_possibly_skeptically_acceptable(0, IncAF.SEMANTICS_NEAD))
+        self.assertTrue(af.is_possibly_skeptically_acceptable(1, IncAF.SEMANTICS_NEAD))
+        self.assertTrue(af.is_possibly_skeptically_acceptable(2, IncAF.SEMANTICS_NEAD))
 
         self.assertTrue(af.is_possibly_skeptically_acceptable(0, IncAF.SEMANTICS_CP))
         self.assertTrue(af.is_possibly_skeptically_acceptable(1, IncAF.SEMANTICS_CP))
@@ -415,8 +415,8 @@ class TestIncAF(unittest.TestCase):
         self.assertFalse(af.is_possibly_skeptically_acceptable_and_extension_exists(1, IncAF.SEMANTICS_AD))
         self.assertFalse(af.is_possibly_skeptically_acceptable_and_extension_exists(2, IncAF.SEMANTICS_AD))
 
-        self.assertFalse(af.is_possibly_skeptically_acceptable_and_extension_exists(0, IncAF.SEMANTICS_NEAD))
-        self.assertFalse(af.is_possibly_skeptically_acceptable_and_extension_exists(1, IncAF.SEMANTICS_NEAD))
+        self.assertTrue(af.is_possibly_skeptically_acceptable_and_extension_exists(0, IncAF.SEMANTICS_NEAD))
+        self.assertTrue(af.is_possibly_skeptically_acceptable_and_extension_exists(1, IncAF.SEMANTICS_NEAD))
         self.assertFalse(af.is_possibly_skeptically_acceptable_and_extension_exists(2, IncAF.SEMANTICS_NEAD))
 
         self.assertTrue(af.is_possibly_skeptically_acceptable_and_extension_exists(0, IncAF.SEMANTICS_CP))
